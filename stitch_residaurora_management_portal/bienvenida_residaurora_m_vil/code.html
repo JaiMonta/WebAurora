@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ResidAurora - Bienvenido</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f0f3ff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-highest": "#d8e3fb",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-tertiary-fixed": "#23005c",
+                        "secondary-fixed-dim": "#8bd6b4",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e9ddff",
+                        "surface-dim": "#cfdaf2",
+                        "on-surface": "#111c2d",
+                        "secondary-fixed": "#a6f2cf",
+                        "primary-fixed-dim": "#a3cddf",
+                        "primary-container": "#0f3d4c",
+                        "on-primary-fixed-variant": "#224c5b",
+                        "inverse-primary": "#a3cddf",
+                        "primary-fixed": "#bfe9fc",
+                        "surface-tint": "#3b6474",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "secondary-container": "#a6f2cf",
+                        "on-error": "#ffffff",
+                        "surface-container": "#e7eeff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "on-secondary-fixed": "#002115",
+                        "inverse-surface": "#263143",
+                        "surface-variant": "#d8e3fb",
+                        "on-surface-variant": "#41484b",
+                        "on-background": "#111c2d",
+                        "on-primary-container": "#7fa8b9",
+                        "background": "#f9f9ff",
+                        "on-primary-fixed": "#001f29",
+                        "error": "#ba1a1a",
+                        "primary": "#002632",
+                        "on-tertiary-container": "#af8fff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c1c7cb",
+                        "tertiary": "#2c006e",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#247155",
+                        "on-secondary-fixed-variant": "#00513a",
+                        "surface": "#f9f9ff",
+                        "outline": "#71787c",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#4500a5",
+                        "surface-container-high": "#dee8ff",
+                        "secondary": "#1b6b4f",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit-12": "48px",
+                        "container-max": "1280px",
+                        "unit-8": "32px",
+                        "unit-16": "64px",
+                        "gutter": "24px",
+                        "unit-4": "16px",
+                        "unit-3": "12px",
+                        "unit-2": "8px",
+                        "margin-mobile": "16px",
+                        "base": "4px",
+                        "unit-6": "24px",
+                        "unit-1": "4px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        body {
+            background-color: #F8FAFC;
+            overscroll-behavior-y: contain;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface min-h-screen flex flex-col items-center justify-between overflow-hidden">
+<!-- Top Glow Effect -->
+<div class="fixed top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+<!-- Main Content Container -->
+<main class="relative z-10 w-full max-w-[400px] px-margin-mobile flex flex-col items-center flex-grow pt-unit-16">
+<!-- Brand Identity Section -->
+<div class="flex flex-col items-center w-full mb-unit-12 fade-in">
+<div class="w-full aspect-[2.03] overflow-hidden rounded-xl shadow-sm border border-outline-variant mb-unit-8">
+<img alt="ResidAurora Identity" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6SeJDtVr2bqoP2Sk3SiC0UBzrrIlOnZX-MPlXroBK8G5TSO3r4p8kqvQ4-5vh_CgvhEUXhmFY6gW3mr59LHYADY18hfrzFkaG6IimfnIopT_r_RPoYMQLBUholA1lWOfgv5l0TPEIQW24JZRXMBOFIW_OqGRf0343FWhwvYScAzBE99qK15xI3ZswacIWoK6ltxG3kIUgXS_SfkxAER9ntha6zxe-eS0sfYSsBbAZNStZ_QNUqmbYqC38ueTf6CwI-eKTSqjnZ9U"/>
+</div>
+<div class="text-center slide-up stagger-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-unit-2">
+                    Bienvenido a ResidAurora
+                </h1>
+<p class="font-body-md text-on-surface-variant max-w-[280px] mx-auto">
+                    Su portal digital de gestión residencial inteligente.
+                </p>
+</div>
+</div>
+<!-- Action Buttons Section -->
+<div class="w-full space-y-unit-4 flex-grow flex flex-col justify-center slide-up stagger-2">
+<!-- Resident Access Button -->
+<button class="w-full h-unit-12 bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-unit-3 shadow-sm active:scale-95 transition-all duration-150">
+<span class="material-symbols-outlined">home</span>
+                Acceso Residente
+            </button>
+<!-- Admin Access Button -->
+<button class="w-full h-unit-12 bg-surface-container-lowest text-primary border border-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-unit-3 shadow-sm active:scale-95 transition-all duration-150">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+                Acceso Administrador
+            </button>
+<div class="pt-unit-4 text-center">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">
+                    ¿Problemas para acceder? Contacte a soporte
+                </a>
+</div>
+</div>
+</main>
+<!-- Minimalist Footer -->
+<footer class="relative z-10 w-full max-w-[400px] px-margin-mobile pb-unit-8 slide-up stagger-3">
+<div class="flex flex-col items-center space-y-unit-4">
+<div class="h-[1px] w-12 bg-outline-variant opacity-50"></div>
+<nav class="flex items-center gap-unit-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity" href="#">Privacidad</a>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<a class="font-label-sm text-label-sm text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity" href="#">Términos</a>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<a class="font-label-sm text-label-sm text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity" href="#">Ayuda</a>
+</nav>
+<p class="font-label-sm text-[10px] text-on-surface-variant/40 tracking-wider">
+                © 2024 RESIDAURORA SOLUTIONS
+            </p>
+</div>
+</footer>
+<!-- Background Atmospheric Effect -->
+<div class="fixed bottom-[-10%] left-1/2 -translate-x-1/2 w-[150%] h-[30%] bg-secondary/5 blur-[100px] rounded-full pointer-events-none"></div>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                button.classList.add('opacity-80');
+            });
+            button.addEventListener('touchend', () => {
+                button.classList.remove('opacity-80');
+            });
+        });
+
+        // Simple check for safe-area insets (modern mobile browsers)
+        if (window.CSS && CSS.supports('padding-bottom: env(safe-area-inset-bottom)')) {
+            document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';
+            document.body.style.paddingTop = 'env(safe-area-inset-top)';
+        }
+    </script>
+</body></html>

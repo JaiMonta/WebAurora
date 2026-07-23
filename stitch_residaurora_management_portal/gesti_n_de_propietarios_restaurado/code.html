@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Propietarios | ResidAurora</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#00513a",
+                    "on-error-container": "#93000a",
+                    "secondary": "#1b6b4f",
+                    "on-primary-fixed-variant": "#224c5b",
+                    "primary-fixed": "#bfe9fc",
+                    "outline": "#71787c",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "surface-tint": "#3b6474",
+                    "tertiary-fixed": "#e9ddff",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface-variant": "#41484b",
+                    "secondary-fixed-dim": "#8bd6b4",
+                    "on-tertiary-fixed": "#23005c",
+                    "primary-fixed-dim": "#a3cddf",
+                    "surface-container": "#e7eeff",
+                    "secondary-fixed": "#a6f2cf",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#247155",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "inverse-primary": "#a3cddf",
+                    "on-tertiary-container": "#af8fff",
+                    "surface-dim": "#cfdaf2",
+                    "inverse-on-surface": "#ecf1ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#002115",
+                    "on-secondary": "#ffffff",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#dee8ff",
+                    "inverse-surface": "#263143",
+                    "on-primary-fixed": "#001f29",
+                    "primary-container": "#0f3d4c",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#111c2d",
+                    "tertiary": "#2c006e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#002632",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-container": "#a6f2cf",
+                    "tertiary-container": "#4500a5",
+                    "on-background": "#111c2d",
+                    "on-primary-container": "#7fa8b9",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c1c7cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit-6": "24px",
+                    "unit-12": "48px",
+                    "unit-8": "32px",
+                    "unit-1": "4px",
+                    "unit-3": "12px",
+                    "container-max": "1280px",
+                    "unit-4": "16px",
+                    "unit-2": "8px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "unit-16": "64px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-50 bg-primary dark:bg-primary-container border-r border-primary-container dark:border-outline flex flex-col py-unit-8 px-unit-4 space-y-unit-2">
+<div class="mb-unit-12 px-unit-4">
+<img alt="ResidAurora Logo" class="h-12 w-auto object-contain mb-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjsubui6q2q0m3yqbQN3e7rwnCQlTG2v7fFvLMvKauabJZaULsQ47JDGbxyXMQBJdriW2o5nRFGIVlZRXReMfif9_6IFnCeBez2HsKKldQ3rTCxezHx6Kh570G5tMY2wuUTpZoiGQdxYflVOeXwgo1xP0eV5YVw9_fZwF2YLTVTTB6mskHaITAH_lqQxoHcLJ15YAh7KxJM6dwnsufEy5VUCJ1PXvr-Xl9bJnsbbIXNuILcFmcf86cd56bFE4yAlskR52Nr2qla4o"/>
+<p class="font-body-sm text-body-sm text-on-primary/60">Portal de Gestión</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Panel</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Recibos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-md text-label-md">Gastos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Pagos</span>
+</a>
+<!-- Active State: Owners -->
+<a class="flex items-center gap-unit-3 bg-secondary dark:bg-secondary-container text-on-secondary dark:text-on-secondary-container rounded-xl px-unit-4 py-unit-3 shadow-sm active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Propietarios</span>
+</a>
+</nav>
+<div class="pt-unit-8 border-t border-on-primary/10 space-y-1">
+<button class="w-full bg-on-primary text-primary font-label-md text-label-md py-unit-3 rounded-xl mb-unit-4 hover:bg-surface-bright transition-colors">
+            Crear Aviso
+        </button>
+<a class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Soporte</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Cerrar Sesión</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center px-gutter w-full h-unit-16 sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant glass-header">
+<div class="flex items-center gap-unit-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-sm font-body-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="Buscar propietarios..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-unit-6">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors relative">
+<span class="material-symbols-outlined text-outline">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined text-outline">settings</span>
+</button>
+<div class="flex items-center gap-unit-3 ml-unit-2">
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="font-label-sm text-label-sm text-outline">Gestor de Propiedades</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="A professional headshot of a Hispanic property manager in his late 30s, wearing a clean business-casual navy polo shirt. He has a friendly and authoritative expression, set against a blurred, high-end modern residential lobby with warm wood panels and soft architectural lighting. The image captures a corporate yet approachable minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgzh9dfXC5y6-cZtUbt9ZVT-OMTRRUNkZM-312lUy6jo2i6d26qEedn20B3t8VK_Oe5gAeleS4UuSMwT3PzVh4SyAnfH0Rd45owdbOdcuAW-ZJMuJz4ZQzzWseqNxQOicT23cM7D7wWth0hxjaLxXcIv1Kl4cjbTCbKGqC-pNVSSjFB5a14mtdMqj2LaPFSJEduWa2Cm_3j0OXYrtL6ewqoTuzy5izC7NFHlq5JXtDS-1aIRGSe-qnJlPRxMYsvhs247gcqUBPQ3w"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-gutter max-w-container-max mx-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-unit-8">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary">Gestión de Propietarios</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Revisa y gestiona los registros de propiedad residencial.</p>
+</div>
+<button class="flex items-center gap-unit-2 bg-primary text-on-primary px-unit-6 h-12 rounded-xl hover:opacity-90 transition-opacity font-label-md text-label-md shadow-sm" onclick="toggleModal(true)"><span class="material-symbols-outlined">add</span> Nuevo Propietario</button>
+</div>
+<!-- Dashboard Stats Summary (Bento Lite) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-unit-6 mb-unit-8">
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Total de Propietarios</p>
+<p class="font-headline-lg text-headline-lg text-primary mt-1">128</p>
+</div>
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Ocupación Activa</p>
+<p class="font-headline-lg text-headline-lg text-primary mt-1">94%</p>
+</div>
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Saldo Pendiente</p>
+<p class="font-headline-lg text-headline-lg text-error mt-1">$12,450</p>
+</div>
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Aprobaciones Pendientes</p>
+<p class="font-headline-lg text-headline-lg text-secondary mt-1">5</p>
+</div>
+</div>
+<!-- Owners Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="p-unit-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low/30">
+<h3 class="font-headline-md text-headline-md text-on-surface">Propietarios Registrados</h3>
+<div class="flex items-center gap-unit-3">
+<button class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filtrar
+                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Exportar
+                    </button>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Nombre</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Apartamento</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Correo Electrónico</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Teléfono</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant text-right">Saldo Actual</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant text-center">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-unit-6 py-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">JD</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Julianne Davenport</span>
+</div>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">Penthouse A-12</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">j.davenport@email.com</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">(555) 012-3456</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-md text-label-md">Pagado</span>
+</td>
+<td class="px-unit-6 py-unit-4 text-center">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low transition-colors group">
+<td class="px-unit-6 py-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs">MC</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Marcus Chen</span>
+</div>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">Unit 402-B</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">mchen@techcorp.io</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">(555) 987-6543</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<span class="font-label-md text-label-md text-error">-$1,250.00</span>
+</td>
+<td class="px-unit-6 py-unit-4 text-center">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-unit-6 py-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-xs">ER</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Elena Rodriguez</span>
+</div>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">Unit 805</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">elena.rod@gmail.com</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">(555) 234-5678</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-md text-label-md">Pagado</span>
+</td>
+<td class="px-unit-6 py-unit-4 text-center">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-container-low/20 hover:bg-surface-container-low transition-colors group">
+<td class="px-unit-6 py-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">SL</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Samuel Lee</span>
+</div>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">Penthouse B-01</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">sam.lee@legacy.com</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">(555) 456-7890</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<span class="font-label-md text-label-md text-error">-$420.50</span>
+</td>
+<td class="px-unit-6 py-unit-4 text-center">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-unit-6 py-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs">SW</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Sarah Wilson</span>
+</div>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">Unit 1104</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">s.wilson@resiaurora.com</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface-variant">(555) 777-8888</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-md text-label-md">Pagado</span>
+</td>
+<td class="px-unit-6 py-unit-4 text-center">
+<div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 text-outline hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-unit-6 py-unit-4 border-t border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<p class="font-label-sm text-label-sm text-outline">Mostrando 5 de 128 propietarios</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-surface-container-low disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- New Owner Modal (Mocked) -->
+<div class="fixed inset-0 z-[100] hidden items-center justify-center p-unit-6 bg-primary/40 backdrop-blur-sm" id="newOwnerModal">
+<div class="bg-surface-container-lowest w-full max-w-xl rounded-xl shadow-2xl border border-outline-variant overflow-hidden animate-in fade-in zoom-in duration-300">
+<div class="px-unit-8 py-unit-6 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-primary">Registrar Nuevo Propietario</h3>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors text-outline" onclick="toggleModal(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<form class="p-unit-8 space-y-unit-6" onsubmit="event.preventDefault(); toggleModal(false);">
+<div class="grid grid-cols-2 gap-unit-4">
+<div class="space-y-unit-1">
+<label class="font-label-sm text-label-sm text-outline">Nombre Completo</label>
+<input class="w-full border-outline-variant rounded-lg px-unit-3 py-unit-2 text-body-md focus:ring-primary focus:border-primary" placeholder="ej. Juan Pérez" type="text"/>
+</div>
+<div class="space-y-unit-1">
+<label class="font-label-sm text-label-sm text-outline">Número de Apartamento</label>
+<input class="w-full border-outline-variant rounded-lg px-unit-3 py-unit-2 text-body-md focus:ring-primary focus:border-primary" placeholder="ej. 101-C" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-unit-4">
+<div class="space-y-unit-1">
+<label class="font-label-sm text-label-sm text-outline">Correo Electrónico</label>
+<input class="w-full border-outline-variant rounded-lg px-unit-3 py-unit-2 text-body-md focus:ring-primary focus:border-primary" placeholder="juan@ejemplo.com" type="email"/>
+</div>
+<div class="space-y-unit-1">
+<label class="font-label-sm text-label-sm text-outline">Número de Teléfono</label>
+<input class="w-full border-outline-variant rounded-lg px-unit-3 py-unit-2 text-body-md focus:ring-primary focus:border-primary" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+</div>
+<div class="space-y-unit-1">
+<label class="font-label-sm text-label-sm text-outline">Saldo Inicial (USD)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline">$</span>
+<input class="w-full border-outline-variant rounded-lg pl-8 pr-unit-3 py-unit-2 text-body-md focus:ring-primary focus:border-primary" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div class="bg-surface-container-low p-unit-4 rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Agregar un nuevo propietario activará automáticamente un correo de invitación al residente para configurar el acceso al portal.</p>
+</div>
+<div class="pt-unit-4 flex gap-unit-3">
+<button class="flex-1 px-unit-6 py-unit-3 rounded-lg border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors" onclick="toggleModal(false)" type="button">Cancelar</button>
+<button class="flex-1 px-unit-6 py-unit-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity" type="submit">Guardar Propietario</button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    function toggleModal(show) {
+        const modal = document.getElementById('newOwnerModal');
+        if (show) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        } else {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') toggleModal(false);
+    });
+
+    // Interactive micro-interactions for rows
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Prevent trigger if clicking action buttons
+            if (e.target.closest('button')) return;
+            
+            // Visual feedback
+            row.classList.add('scale-[0.995]');
+            setTimeout(() => row.classList.remove('scale-[0.995]'), 150);
+        });
+    });
+</script>
+</body></html>

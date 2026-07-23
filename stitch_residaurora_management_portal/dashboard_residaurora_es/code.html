@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ResidAurora | Panel de Gestión de Propiedades</title>
+<!-- Google Fonts: Inter for the clean, corporate aesthetic -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#00513a",
+                    "on-error-container": "#93000a",
+                    "secondary": "#1b6b4f",
+                    "on-primary-fixed-variant": "#224c5b",
+                    "primary-fixed": "#bfe9fc",
+                    "outline": "#71787c",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "surface-tint": "#3b6474",
+                    "tertiary-fixed": "#e9ddff",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface-variant": "#41484b",
+                    "secondary-fixed-dim": "#8bd6b4",
+                    "on-tertiary-fixed": "#23005c",
+                    "primary-fixed-dim": "#a3cddf",
+                    "surface-container": "#e7eeff",
+                    "secondary-fixed": "#a6f2cf",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#247155",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "inverse-primary": "#a3cddf",
+                    "on-tertiary-container": "#af8fff",
+                    "surface-dim": "#cfdaf2",
+                    "inverse-on-surface": "#ecf1ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#002115",
+                    "on-secondary": "#ffffff",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#dee8ff",
+                    "inverse-surface": "#263143",
+                    "on-primary-fixed": "#001f29",
+                    "primary-container": "#0f3d4c",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#111c2d",
+                    "tertiary": "#2c006e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#002632",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-container": "#a6f2cf",
+                    "tertiary-container": "#4500a5",
+                    "on-background": "#111c2d",
+                    "on-primary-container": "#7fa8b9",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c1c7cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit-6": "24px",
+                    "unit-12": "48px",
+                    "unit-8": "32px",
+                    "unit-1": "4px",
+                    "unit-3": "12px",
+                    "container-max": "1280px",
+                    "unit-4": "16px",
+                    "unit-2": "8px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "unit-16": "64px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .expense-bar { transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 z-50 bg-primary dark:bg-primary-container border-r border-primary-container dark:border-outline flex-col py-unit-8 px-unit-4 space-y-unit-2">
+<div class="mb-unit-12 px-unit-4">
+<h1 class="font-headline-md text-headline-md font-black text-on-primary dark:text-on-primary-container uppercase tracking-tight">ResidAurora</h1>
+<p class="font-body-sm text-body-sm text-on-primary/60 dark:text-on-primary-container/60">Portal de Gestión</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-unit-3 bg-secondary dark:bg-secondary-container text-on-secondary dark:text-on-secondary-container rounded-xl px-unit-4 py-unit-3 shadow-sm active:scale-95 transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Panel</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Recibos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label-md text-label-md">Gastos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Pagos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Propietarios</span>
+</a>
+</nav>
+<div class="pt-unit-8 border-t border-on-primary/10 space-y-1">
+<button class="w-full mb-unit-4 bg-secondary-container text-on-secondary-container py-unit-3 rounded-xl font-label-md text-label-md active:scale-95 transition-transform">
+                Crear Aviso
+            </button>
+<a class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Soporte</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Cerrar Sesión</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-gutter w-full h-unit-16 sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant dark:border-outline-variant">
+<div class="flex items-center gap-unit-4">
+<div class="md:hidden flex items-center">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+</div>
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-unit-12 pr-unit-6 py-unit-2 text-body-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Buscar recursos..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-unit-6">
+<div class="flex items-center gap-unit-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="settings">settings</span>
+</div>
+<div class="h-unit-10 w-unit-10 rounded-full overflow-hidden border border-outline-variant">
+<img alt="Perfil profesional" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT59z1ZNttf3l1iJEqUPyDEGgvWAdlheSV-W9x1WRgrX5qoL_66gO4uXTW3YGdjO003W-ed-F5AxLgiTUMDUUFbxwg9g9RoQwkvFwCQCvEpNM_IsqT0sZQUTc9NAMC0MuAPYi7L5gTrzBmUlfMqEhnp1UnCVjekrd9K1TnXMNFJqjxpv4I93td_13swrEHg-R9yzZ9HPiSy1EpFQMw-qURZgz09uemM1ZyqK4Ofh55iYNhLGvhHD0R8Ve6iePQ_FMlr0lQsqZNTtQ"/>
+</div>
+</div>
+</header>
+<section class="p-gutter max-w-container-max mx-auto">
+<!-- Welcome Section -->
+<div class="mb-unit-8 flex flex-col md:flex-row md:items-end justify-between gap-unit-4">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary">Bienvenido, Marcus</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Esto es lo que está pasando en Aurora Heights hoy. Tienes 3 solicitudes de mantenimiento urgentes y 1 aprobación de propietario pendiente.</p>
+</div>
+<div class="flex gap-unit-3">
+<button class="px-unit-6 py-unit-3 border border-outline-variant rounded-xl font-label-md text-label-md hover:bg-surface-container transition-colors">
+                        Descargar Reporte
+                    </button>
+<button class="px-unit-6 py-unit-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md shadow-lg active:scale-95 transition-transform">
+                        Gestionar Solicitudes
+                    </button>
+</div>
+</div>
+<!-- Bento Dashboard Grid -->
+<div class="bento-grid">
+<!-- Summary Card: My Balance -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant p-unit-6 rounded-xl flex flex-col justify-between overflow-hidden relative group">
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-secondary/5 rounded-full blur-3xl group-hover:bg-secondary/10 transition-colors"></div>
+<div>
+<div class="flex justify-between items-start mb-unit-6">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Mi Saldo</span>
+<span class="material-symbols-outlined text-secondary" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<h3 class="font-headline-xl text-headline-xl text-primary">$12.450,80</h3>
+<p class="text-secondary font-label-md text-label-md mt-unit-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span> 
+                            +8,4% desde el mes pasado
+                        </p>
+</div>
+<div class="mt-unit-12">
+<div class="flex justify-between font-label-sm text-label-sm text-outline mb-1">
+<span>Meta Mensual</span>
+<span>85%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[85%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Expense Chart -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest border border-outline-variant p-unit-6 rounded-xl">
+<div class="flex justify-between items-center mb-unit-8">
+<h4 class="font-headline-md text-headline-md text-primary">Gastos Comunes</h4>
+<select class="border-none bg-surface-container-low rounded-lg text-label-sm font-label-sm focus:ring-primary">
+<option>Últimos 6 Meses</option>
+<option>Último Año</option>
+</select>
+</div>
+<div class="flex items-end justify-between h-48 gap-unit-4 px-unit-2">
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-primary/10 rounded-t-lg expense-bar relative" style="height: 60%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$4.2k</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline mt-3">Ene</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-primary/20 rounded-t-lg expense-bar relative" style="height: 85%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$5.8k</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline mt-3">Feb</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-secondary rounded-t-lg expense-bar relative" style="height: 45%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$3.1k</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline mt-3">Mar</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-primary/30 rounded-t-lg expense-bar relative" style="height: 70%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$4.9k</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline mt-3">Abr</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-primary/40 rounded-t-lg expense-bar relative" style="height: 95%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$6.4k</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline mt-3">May</span>
+</div>
+<div class="flex flex-col items-center flex-1 group">
+<div class="w-full bg-primary rounded-t-lg expense-bar relative" style="height: 55%">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$3.8k</div>
+</div>
+<span class="font-label-sm text-label-sm text-outline mt-3">Jun</span>
+</div>
+</div>
+</div>
+<!-- Quick Actions / Mini Stats -->
+<div class="col-span-12 lg:col-span-3 space-y-gutter">
+<div class="bg-primary p-unit-6 rounded-xl text-on-primary">
+<div class="flex items-center justify-between mb-unit-4">
+<span class="font-label-md text-label-md opacity-80">Tasa de Ocupación</span>
+<span class="material-symbols-outlined" data-icon="apartment">apartment</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold">94%</span>
+<span class="text-secondary-fixed text-sm">+2%</span>
+</div>
+</div>
+<div class="bg-tertiary-container p-unit-6 rounded-xl text-on-tertiary-container">
+<div class="flex items-center justify-between mb-unit-4">
+<span class="font-label-md text-label-md opacity-80">Tareas Pendientes</span>
+<span class="material-symbols-outlined" data-icon="assignment_late">assignment_late</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold">12</span>
+<span class="text-on-tertiary-container/60 text-sm">Próximas</span>
+</div>
+</div>
+</div>
+<!-- Latest Community News -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant p-unit-8 rounded-xl">
+<div class="flex justify-between items-center mb-unit-8">
+<h4 class="font-headline-md text-headline-md text-primary">Inteligencia Comunitaria</h4>
+<a class="font-label-md text-label-md text-secondary hover:underline" href="#">Ver Todas las Actualizaciones</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-unit-8">
+<!-- News Item 1 -->
+<div class="space-y-unit-4 group cursor-pointer">
+<div class="h-48 rounded-xl overflow-hidden relative">
+<img alt="Mantenimiento" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcFigaOlXjGIKQFDzSERnQo1vxn4EV1Z8_kpcHRzJ0sKZN0A-zcGRseatxHhq1-Z8Ydj3YoLKEeVTNkhLaQDZnyqzldGh-8e4ba-zpSovBQokuvGz9U6ZCMqIQM5-xci8IpZqkMIiFQwSu5uT98q_pdn5GAn_Ju1upTLp_a4Fz14H5J3BgkIbQcfxnyG0ExGp_p4wkuu5ryuW4DwzLJ7rk_rm2aWSeYpTfSM_MY9jLGwLwVubs_B90vT4q3JI9Q0lCslUzaWrtdKA"/>
+<span class="absolute top-4 left-4 bg-primary/90 backdrop-blur text-on-primary px-3 py-1 rounded-full font-label-sm text-label-sm">Mantenimiento</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline mb-1">Publicado hace 2 horas</p>
+<h5 class="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors">Inspección Trimestral de HVAC Programada</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-2">El equipo visitará todas las unidades del ala oeste entre las 9 AM y las 4 PM este miércoles. Por favor, asegúrese de que los accesos estén despejados...</p>
+</div>
+</div>
+<!-- News Item 2 -->
+<div class="space-y-unit-4 group cursor-pointer">
+<div class="h-48 rounded-xl overflow-hidden relative">
+<img alt="Comunidad" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxLCvxlPrxncEC73SNt6Wkd3aWeiKc1lAaKOjXQM5CP643Y2vy3_ushXLfseMRNjTGgt0MKiLLILu3PfTGVYhoPYB6g62FFQVjbAMkugjNUTOUNvIGTJ-UKVOLcjAuNx98jpUBxy09rzlByRpmbrgu_aSJFvHpCXbTBLS9gUFUCU6La45YBRMqgg0vihN5Va7J3i55leSKJ5C9An9Oqm0yTk6SFwwzptZV0yN_GRF4V_q39RSdvXPmbH-PQkbAt5KANjojRHwGYo8"/>
+<span class="absolute top-4 left-4 bg-secondary/90 backdrop-blur text-on-secondary px-3 py-1 rounded-full font-label-sm text-label-sm">Comunidad</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline mb-1">Publicado ayer</p>
+<h5 class="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors">Evento Social en el Jardín de la Azotea</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-2">Únase a sus vecinos para nuestro encuentro anual del Solsticio de Verano. Habrá refrigerios y música en vivo a partir de las 6 PM...</p>
+</div>
+</div>
+<!-- News Item 3 -->
+<div class="space-y-unit-4 group cursor-pointer">
+<div class="h-48 rounded-xl overflow-hidden relative">
+<img alt="Mejora" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKpZp2daEgMfanSZ0IoHFTYDsJLkcuPojpkYYw0bZvW8EuvoXBFZYwZiCLrJBb-No_I9GzDd09Cy3CRsJlj2RWyZO6eLYijPOHjxW2NLbq6NG3SM7hJPkLUuyTexH39XfdU8zBCgHu6LpvbRXBRXBJgJj8oJxEsuGK0kEeykIbJs62ryCTZ_p1NoV950KRRmj97ZkB6EZDHjVZxBfLYzyShy9j_uyQymiANPHCsTATd3dtDc3P4Kwy6n76wdFhzKgqn35fc8sA0gY"/>
+<span class="absolute top-4 left-4 bg-tertiary/90 backdrop-blur text-on-tertiary px-3 py-1 rounded-full font-label-sm text-label-sm">Mejora</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline mb-1">Publicado hace 3 días</p>
+<h5 class="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors">Integración de Sistema de Acceso Inteligente</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-2">Estamos implementando nuevos controles de acceso móviles para la entrada principal. Descargue la app ResidAurora para registrar su llave digital...</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Transactions / Table Section -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<div class="p-unit-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low/30">
+<h4 class="font-headline-md text-headline-md text-primary">Transacciones Recientes</h4>
+<button class="text-label-md font-label-md text-primary flex items-center gap-2 hover:bg-surface-container p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span> Filtrar
+                        </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/20">
+<th class="p-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Descripción</th>
+<th class="p-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Fecha</th>
+<th class="p-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Estado</th>
+<th class="p-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant text-right">Monto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="home_repair_service">home_repair_service</span>
+</div>
+<span class="font-body-md text-body-md text-primary">Mantenimiento de Ascensor - Torre Norte</span>
+</div>
+</td>
+<td class="p-unit-4 font-body-sm text-body-sm text-outline">Oct 12, 2023</td>
+<td class="p-unit-4">
+<span class="px-3 py-1 rounded-full text-[12px] font-bold bg-secondary/10 text-secondary">Éxito</span>
+</td>
+<td class="p-unit-4 font-body-md text-body-md text-primary text-right">-$1.200,00</td>
+</tr>
+<tr class="bg-surface-container-low/10 hover:bg-surface-container-low transition-colors">
+<td class="p-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="font-body-md text-body-md text-primary">Cuotas de HOA Mensuales - Unidad 402</span>
+</div>
+</td>
+<td class="p-unit-4 font-body-sm text-body-sm text-outline">Oct 10, 2023</td>
+<td class="p-unit-4">
+<span class="px-3 py-1 rounded-full text-[12px] font-bold bg-secondary/10 text-secondary">Éxito</span>
+</td>
+<td class="p-unit-4 font-body-md text-body-md text-primary text-right">+$450,00</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-unit-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+</div>
+<span class="font-body-md text-body-md text-primary">Servicios de Plomería de Emergencia</span>
+</div>
+</td>
+<td class="p-unit-4 font-body-sm text-body-sm text-outline">Oct 08, 2023</td>
+<td class="p-unit-4">
+<span class="px-3 py-1 rounded-full text-[12px] font-bold bg-error/10 text-error">Pendiente</span>
+</td>
+<td class="p-unit-4 font-body-md text-body-md text-primary text-right">-$850,00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<!-- Contextual FAB -->
+<button class="fixed bottom-unit-8 right-unit-8 w-unit-16 h-unit-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-[32px]" data-icon="add">add</span>
+</button>
+</main>
+<script>
+        // Micro-interaction: Chart animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.expense-bar');
+            bars.forEach(bar => {
+                const finalHeight = bar.style.height;
+                bar.style.height = '0%';
+                setTimeout(() => {
+                    bar.style.height = finalHeight;
+                }, 300);
+            });
+        });
+
+        // Simple Mobile Navigation Toggle
+        const mobileMenuBtn = document.querySelector('[data-icon="menu"]');
+        const sidebar = document.querySelector('aside');
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('flex');
+                sidebar.classList.toggle('w-full');
+            });
+        }
+    </script>
+</body></html>

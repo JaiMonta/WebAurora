@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-surface-variant": "#41484b",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-primary-container": "#7fa8b9",
+                        "surface-tint": "#3b6474",
+                        "primary": "#002632",
+                        "on-secondary-container": "#247155",
+                        "surface-container-low": "#f0f3ff",
+                        "on-surface": "#111c2d",
+                        "background": "#f9f9ff",
+                        "secondary-container": "#a6f2cf",
+                        "primary-fixed": "#bfe9fc",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#a3cddf",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#4500a5",
+                        "surface-dim": "#cfdaf2",
+                        "secondary-fixed": "#a6f2cf",
+                        "on-secondary-fixed": "#002115",
+                        "on-primary-fixed": "#001f29",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e9ddff",
+                        "secondary-fixed-dim": "#8bd6b4",
+                        "outline": "#71787c",
+                        "tertiary": "#2c006e",
+                        "surface-container": "#e7eeff",
+                        "inverse-surface": "#263143",
+                        "on-tertiary-container": "#af8fff",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-primary": "#a3cdf",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#00513a",
+                        "on-background": "#111c2d",
+                        "surface-variant": "#d8e3fb",
+                        "on-error": "#ffffff",
+                        "primary-container": "#0f3d4c",
+                        "secondary": "#1b6b4f",
+                        "outline-variant": "#c1c7cb",
+                        "on-tertiary-fixed": "#23005c",
+                        "surface-container-high": "#dee8ff",
+                        "on-primary-fixed-variant": "#224c5b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit-3": "12px",
+                        "gutter": "24px",
+                        "unit-4": "16px",
+                        "unit-16": "64px",
+                        "unit-2": "8px",
+                        "unit-1": "4px",
+                        "container-max": "1280px",
+                        "base": "4px",
+                        "unit-6": "24px",
+                        "unit-8": "32px",
+                        "unit-12": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .page-canvas {
+            width: 100%;
+            max-width: 850px;
+            margin: 40px auto;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            min-height: 1100px;
+            position: relative;
+            padding: 60px 80px;
+            border: 1px solid #e2e8f0;
+        }
+        .sidebar-active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ffffff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        @media print {
+            body { background: white; margin: 0; }
+            .page-canvas { margin: 0; box-shadow: none; border: none; width: 100%; max-width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Floating Actions (Non-Printable) -->
+<div class="no-print fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+<button class="flex items-center gap-2 bg-primary text-on-primary px-unit-6 py-unit-3 rounded-full shadow-lg hover:bg-primary-container transition-all active:scale-95" onclick="window.print()">
+<span class="material-symbols-outlined">download</span>
+<span class="font-label-md text-label-md">Download PDF</span>
+</button>
+</div>
+<!-- Layout Container (Mobile responsiveness handled via simple flex) -->
+<div class="flex flex-col md:flex-row min-h-screen">
+<!-- SIDEBAR (Reference from JSON, but customized for this task) -->
+<aside class="hidden md:flex w-64 bg-primary text-on-primary fixed h-full flex-col py-unit-8 px-unit-4 space-y-unit-2 z-40">
+<div class="flex items-center gap-unit-3 mb-unit-8 px-unit-2">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">location_city</span>
+<div>
+<h1 class="font-headline-md text-headline-md font-black leading-tight">ResidAurora</h1>
+<p class="font-body-sm text-body-sm opacity-70">Management Portal</p>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<div class="flex items-center gap-unit-3 text-on-primary/60 px-unit-4 py-unit-3 cursor-not-allowed">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-unit-3 bg-secondary text-on-secondary rounded-xl px-unit-4 py-unit-3 shadow-sm cursor-default">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Guía Exportación</span>
+</div>
+<div class="flex items-center gap-unit-3 text-on-primary/60 px-unit-4 py-unit-3 cursor-not-allowed">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Owners</span>
+</div>
+<div class="flex items-center gap-unit-3 text-on-primary/60 px-unit-4 py-unit-3 cursor-not-allowed">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Payments</span>
+</div>
+</nav>
+<div class="pt-unit-8 border-t border-primary-container/30">
+<div class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 rounded-xl transition-all">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</div>
+</div>
+</aside>
+<!-- MAIN CONTENT CANVAS (The "Document") -->
+<main class="flex-grow md:ml-64 p-gutter flex justify-center bg-surface">
+<article class="page-canvas flex flex-col">
+<!-- DOCUMENT HEADER -->
+<header class="flex justify-between items-start border-b border-outline-variant pb-unit-8 mb-unit-12">
+<div class="max-w-[60%]">
+<img alt="ResidAurora Brand Logo" class="h-16 w-auto mb-unit-4 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVP0dHemAMCIw3mDRMvSAVYkyfsZ4Tn1mDWNaNyILOKp8G4YQyDP4QzTPrzy_yqwX69gMjP1t5Uz7MbQ7DEDWPtZKH56-8QTqCyHMn7h2m8WpNDGH7gmkPl1xb4TrHx_BpSKT_b93hls6mLx6MU4lIQSCAuy2MOGXQe5fMSnWSEtx3J0spcibpLupQrVKok5fa3L7Jc82urflOHjsXSz0BSCRce7dOVLe0M0XK_AJ4LgUt65w8s2ust3eSKPMy5If95ChcDDqa8Fs"/>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-unit-1">Guía de Exportación</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant italic">Documentación Técnica de la Plataforma v1.0.4</p>
+</div>
+<div class="text-right flex flex-col gap-1">
+<span class="px-unit-3 py-unit-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider self-end mb-2">OFFICIAL DOCUMENT</span>
+<p class="font-label-md text-label-md text-primary">Fecha: Octubre 2023</p>
+<p class="font-label-md text-label-md text-outline">Ref: RA-EXP-2023-001</p>
+<p class="font-label-md text-label-md text-outline">Author: Technical Lead</p>
+</div>
+</header>
+<!-- SECTION: PROJECT SUMMARY -->
+<section class="mb-unit-12">
+<div class="flex items-center gap-2 mb-unit-4 border-l-4 border-primary pl-4">
+<h2 class="font-headline-md text-headline-md text-primary uppercase tracking-tight">1. Resumen del Proyecto</h2>
+</div>
+<div class="grid grid-cols-2 gap-gutter bg-surface-container-low p-unit-6 rounded-xl border border-outline-variant/30">
+<div class="space-y-4">
+<div>
+<label class="font-label-md text-label-md text-outline block">Nombre del Proyecto</label>
+<p class="font-body-md text-body-md font-semibold text-primary">ResidAurora</p>
+</div>
+<div>
+<label class="font-label-md text-label-md text-outline block">Propósito</label>
+<p class="font-body-md text-body-md text-on-surface">Portal de Gestión Residencial Integral para propietarios y administradores.</p>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="font-label-md text-label-md text-outline block">Stack Tecnológico</label>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="px-unit-2 py-unit-1 bg-surface-container-highest border border-outline-variant text-on-surface-variant rounded font-mono text-xs">React 18</span>
+<span class="px-unit-2 py-unit-1 bg-surface-container-highest border border-outline-variant text-on-surface-variant rounded font-mono text-xs">Tailwind CSS</span>
+<span class="px-unit-2 py-unit-1 bg-surface-container-highest border border-outline-variant text-on-surface-variant rounded font-mono text-xs">Lucide Icons</span>
+<span class="px-unit-2 py-unit-1 bg-surface-container-highest border border-outline-variant text-on-surface-variant rounded font-mono text-xs">Material Symbols</span>
+</div>
+</div>
+<div>
+<label class="font-label-md text-label-md text-outline block">Tipografía Principal</label>
+<p class="font-body-md text-body-md text-on-surface">Inter (Sans-serif)</p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: INCLUDED SCREENS -->
+<section class="mb-unit-12">
+<div class="flex items-center gap-2 mb-unit-4 border-l-4 border-primary pl-4">
+<h2 class="font-headline-md text-headline-md text-primary uppercase tracking-tight">2. Catálogo de Pantallas</h2>
+</div>
+<div class="space-y-unit-4">
+<div class="group flex items-start gap-gutter p-unit-4 rounded-lg border border-outline-variant hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container">waving_hand</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary mb-1">Módulo 01: Onboarding</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Flujo de Bienvenida, Login Seguro y Recuperación de Contraseña.</p>
+</div>
+</div>
+<div class="group flex items-start gap-gutter p-unit-4 rounded-lg border border-outline-variant hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container">dashboard</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary mb-1">Módulo 02: Dashboard Principal</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Vista general de métricas, avisos recientes y accesos rápidos a gestión financiera.</p>
+</div>
+</div>
+<div class="group flex items-start gap-gutter p-unit-4 rounded-lg border border-outline-variant hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container">manage_accounts</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary mb-1">Módulo 03: Gestión de Propietarios</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Directorio completo, perfiles de residentes, asignación de unidades y registro de mascotas.</p>
+</div>
+</div>
+<div class="group flex items-start gap-gutter p-unit-4 rounded-lg border border-outline-variant hover:border-primary transition-colors">
+<div class="w-12 h-12 rounded bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container">payments</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary mb-1">Módulo 04: Ecosistema Financiero</h3>
+<div class="grid grid-cols-2 gap-x-unit-4 gap-y-unit-2 mt-2">
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Mis Recibos Digitales
+                                    </div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Gastos Comunes
+                                    </div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Historial de Pagos
+                                    </div>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Realizar Pago Seguro
+                                    </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: DEVELOPER INSTRUCTIONS -->
+<section class="mb-unit-12">
+<div class="flex items-center gap-2 mb-unit-4 border-l-4 border-primary pl-4">
+<h2 class="font-headline-md text-headline-md text-primary uppercase tracking-tight">3. Guía de Implementación</h2>
+</div>
+<div class="p-unit-6 border border-outline-variant rounded-xl bg-white space-y-6">
+<div class="flex gap-gutter">
+<div class="w-1/2">
+<h4 class="font-label-md text-label-md text-primary mb-3">Principios de Diseño</h4>
+<ul class="space-y-2">
+<li class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-secondary">check_circle</span>
+                                        Espaciado basado en múltiplo de 4px.
+                                    </li>
+<li class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-secondary">check_circle</span>
+                                        Uso de sombras suaves (Tonal Layers).
+                                    </li>
+<li class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-secondary">check_circle</span>
+                                        Contraste AAA para accesibilidad.
+                                    </li>
+</ul>
+</div>
+<div class="w-1/2">
+<h4 class="font-label-md text-label-md text-primary mb-3">Configuración Tailwind</h4>
+<code class="block bg-surface p-unit-3 rounded text-xs font-mono text-primary-container leading-relaxed">
+                                    colors: {<br/>
+                                      primary: '#002632',<br/>
+                                      secondary: '#1B6B4F',<br/>
+                                      surface: '#F8FAFC'<br/>
+                                    }
+                                </code>
+</div>
+</div>
+</div>
+</section>
+<!-- FOOTER -->
+<footer class="mt-auto pt-unit-8 border-t border-outline-variant flex justify-between items-center text-[10px] text-outline uppercase tracking-widest font-bold">
+<span>ResidAurora © 2023 - All Rights Reserved</span>
+<span>Page 01 of 01</span>
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> System Online
+                    </span>
+</footer>
+</article>
+</main>
+</div>
+<!-- JS for simple interactivity -->
+<script>
+        // Micro-interaction for hover states on the "Download PDF" button
+        const downloadBtn = document.querySelector('button[onclick="window.print()"]');
+        downloadBtn.addEventListener('mouseenter', () => {
+            downloadBtn.classList.add('shadow-2xl');
+        });
+        downloadBtn.addEventListener('mouseleave', () => {
+            downloadBtn.classList.remove('shadow-2xl');
+        });
+
+        // Handle print finish/cancel
+        window.onafterprint = function(){
+            console.log("Printing completed or cancelled");
+        }
+    </script>
+</body></html>

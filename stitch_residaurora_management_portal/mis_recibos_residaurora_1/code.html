@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Receipts | ResidAurora Management Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#00513a",
+                    "on-error-container": "#93000a",
+                    "secondary": "#1b6b4f",
+                    "on-primary-fixed-variant": "#224c5b",
+                    "primary-fixed": "#bfe9fc",
+                    "outline": "#71787c",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "surface-tint": "#3b6474",
+                    "tertiary-fixed": "#e9ddff",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface-variant": "#41484b",
+                    "secondary-fixed-dim": "#8bd6b4",
+                    "on-tertiary-fixed": "#23005c",
+                    "primary-fixed-dim": "#a3cddf",
+                    "surface-container": "#e7eeff",
+                    "secondary-fixed": "#a6f2cf",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#247155",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "inverse-primary": "#a3cddf",
+                    "on-tertiary-container": "#af8fff",
+                    "surface-dim": "#cfdaf2",
+                    "inverse-on-surface": "#ecf1ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#002115",
+                    "on-secondary": "#ffffff",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#dee8ff",
+                    "inverse-surface": "#263143",
+                    "on-primary-fixed": "#001f29",
+                    "primary-container": "#0f3d4c",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#111c2d",
+                    "tertiary": "#2c006e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#002632",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-container": "#a6f2cf",
+                    "tertiary-container": "#4500a5",
+                    "on-background": "#111c2d",
+                    "on-primary-container": "#7fa8b9",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c1c7cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit-6": "24px",
+                    "unit-12": "48px",
+                    "unit-8": "32px",
+                    "unit-1": "4px",
+                    "unit-3": "12px",
+                    "container-max": "1280px",
+                    "unit-4": "16px",
+                    "unit-2": "8px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "unit-16": "64px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar Component -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 z-50 bg-primary dark:bg-primary-container border-r border-primary-container dark:border-outline py-unit-8 px-unit-4 space-y-unit-2">
+<div class="px-unit-4 mb-unit-8">
+<h1 class="font-headline-md text-headline-md font-black text-on-primary dark:text-on-primary-container">ResidAurora</h1>
+<p class="font-body-sm text-body-sm text-on-primary/60">Management Portal</p>
+</div>
+<nav class="flex-1 space-y-unit-1">
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-unit-3 bg-secondary dark:bg-secondary-container text-on-secondary dark:text-on-secondary-container rounded-xl px-unit-4 py-unit-3 shadow-sm active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Receipts</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-md text-label-md">Expenses</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 dark:text-on-primary-container/80 px-unit-4 py-unit-3 hover:bg-on-primary/10 dark:hover:bg-on-primary-container/10 rounded-xl transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Owners</span>
+</a>
+</nav>
+<div class="pt-unit-4 border-t border-on-primary/10">
+<button class="w-full bg-on-primary text-primary font-label-md text-label-md py-unit-3 rounded-xl mb-unit-4 hover:bg-on-primary/90 transition-colors">
+                Create Notice
+            </button>
+<a class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-2 hover:bg-on-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-primary/80 px-unit-4 py-unit-2 hover:bg-on-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar Component -->
+<header class="flex justify-between items-center px-gutter w-full h-unit-16 sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant dark:border-outline-variant">
+<div class="flex items-center gap-unit-4">
+<button class="md:hidden p-unit-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-unit-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-unit-12 pr-unit-4 py-unit-2 bg-surface-container-low border-none rounded-full w-64 text-body-sm focus:ring-2 focus:ring-primary/20" placeholder="Search records..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-unit-4">
+<div class="flex gap-unit-2">
+<button class="p-unit-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-unit-2 hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant mx-unit-1"></div>
+<div class="flex items-center gap-unit-3 cursor-pointer">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md text-on-surface leading-tight">Alex Rivera</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">Property Manager</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="Professional headshot of a Hispanic property manager in a corporate office setting with soft natural light, wearing a tailored navy blazer. The background is a blurred modern office space with minimalist decor, maintaining a high-end corporate aesthetic consistent with ResidAurora's professional brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxZyxr3iQg0aE-xCSvo43RqSPxIAh4o8XxybWLQU8gm-mSR28tExlOBsgAwUwfNVmCIv-wmvBSdOx6ajjVBVdEou9bxJBnw1VbptSjOaBwLz8ySoTTj4rnqE9wnsy_eMt3G-4unyK22B0KXUcspkP4Agz9W35keck7QChGdQEcI4st9_BpM3LKKjXX_zJVnRsG9Es3diyDQ6jUQOPHTtARfNSsB-e6WDXNqjn1l7gbo05sQ3ElDwOmTF_sGchYrcyeixx571xaDBs"/>
+</div>
+</div>
+</header>
+<!-- Canvas Content -->
+<section class="p-gutter max-w-container-max mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-unit-8 gap-unit-4">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-unit-1">Receipts</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and track your residential payment documentation.</p>
+</div>
+<div class="flex gap-unit-3">
+<button class="flex items-center gap-unit-2 px-unit-4 py-unit-2 border border-outline-variant rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">upload_file</span>
+                        Bulk Upload
+                    </button>
+<button class="flex items-center gap-unit-2 px-unit-4 py-unit-2 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                        New Receipt
+                    </button>
+</div>
+</div>
+<!-- Dashboard Style Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-unit-4 mb-unit-8">
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-2">Total Collected (YTD)</p>
+<h3 class="font-headline-lg text-headline-lg text-primary">$142,500.00</h3>
+<div class="flex items-center gap-unit-1 mt-unit-2 text-secondary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-label-sm text-label-sm">+12% from last year</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-2">Pending Invoices</p>
+<h3 class="font-headline-lg text-headline-lg text-primary">14</h3>
+<div class="flex items-center gap-unit-1 mt-unit-2 text-error">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+<span class="font-label-sm text-label-sm">Requires attention</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-2">Recent Downloads</p>
+<h3 class="font-headline-lg text-headline-lg text-primary">184</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-unit-2">In the last 30 days</p>
+</div>
+<div class="bg-surface-container-lowest p-unit-6 rounded-xl border border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-unit-2">Accuracy Rate</p>
+<h3 class="font-headline-lg text-headline-lg text-primary">99.8%</h3>
+<p class="font-label-sm text-label-sm text-secondary mt-unit-2">Internal Audit passed</p>
+</div>
+</div>
+<!-- Table Filters -->
+<div class="bg-surface-container-low/50 p-unit-4 rounded-t-xl border-x border-t border-outline-variant flex flex-wrap items-center gap-unit-4">
+<div class="flex items-center gap-unit-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Year:</label>
+<select class="bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md text-label-md px-unit-3 py-unit-1 focus:ring-primary focus:border-primary">
+<option>2024</option>
+<option>2023</option>
+<option>2022</option>
+</select>
+</div>
+<div class="flex items-center gap-unit-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Status:</label>
+<select class="bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md text-label-md px-unit-3 py-unit-1 focus:ring-primary focus:border-primary">
+<option>All Statuses</option>
+<option>Paid</option>
+<option>Pending</option>
+<option>Overdue</option>
+</select>
+</div>
+<div class="ml-auto flex items-center gap-unit-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-unit-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">filter_list</span>
+<input class="pl-unit-12 pr-unit-4 py-unit-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm focus:ring-primary" placeholder="Filter by Month..." type="text"/>
+</div>
+<button class="p-unit-1 hover:bg-surface-container-highest rounded transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Main Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-b-xl overflow-hidden overflow-x-auto shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">
+<div class="flex items-center gap-unit-2">Month <span class="material-symbols-outlined text-[14px]">expand_more</span></div>
+</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Invoice Reference</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Amount</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Status</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Issue Date</th>
+<th class="px-unit-6 py-unit-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface font-semibold">October 2024</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">INV-2024-10-042</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface">$12,450.00</td>
+<td class="px-unit-6 py-unit-4">
+<span class="inline-flex items-center px-unit-2 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-unit-2"></span>
+                                    Paid
+                                </span>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">Oct 01, 2024</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<button class="p-unit-2 text-primary hover:bg-primary-fixed rounded-lg transition-all" title="Download PDF">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-unit-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface font-semibold">September 2024</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">INV-2024-09-038</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface">$12,450.00</td>
+<td class="px-unit-6 py-unit-4">
+<span class="inline-flex items-center px-unit-2 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-unit-2"></span>
+                                    Paid
+                                </span>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">Sep 01, 2024</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<button class="p-unit-2 text-primary hover:bg-primary-fixed rounded-lg transition-all" title="Download PDF">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-unit-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface font-semibold">August 2024</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">INV-2024-08-021</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface">$13,200.00</td>
+<td class="px-unit-6 py-unit-4">
+<span class="inline-flex items-center px-unit-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-outline mr-unit-2"></span>
+                                    Pending
+                                </span>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">Aug 01, 2024</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<button class="p-unit-2 text-primary hover:bg-primary-fixed rounded-lg transition-all opacity-50 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-unit-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface font-semibold">July 2024</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">INV-2024-07-015</td>
+<td class="px-unit-6 py-unit-4 font-body-md text-body-md text-on-surface">$11,800.00</td>
+<td class="px-unit-6 py-unit-4">
+<span class="inline-flex items-center px-unit-2 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-unit-2"></span>
+                                    Paid
+                                </span>
+</td>
+<td class="px-unit-6 py-unit-4 font-body-sm text-body-sm text-on-surface-variant">Jul 01, 2024</td>
+<td class="px-unit-6 py-unit-4 text-right">
+<button class="p-unit-2 text-primary hover:bg-primary-fixed rounded-lg transition-all" title="Download PDF">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-unit-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-unit-6 py-unit-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Showing 1 to 4 of 12 records</p>
+<div class="flex items-center gap-unit-2">
+<button class="p-unit-2 border border-outline-variant rounded-lg bg-surface-container-lowest hover:bg-surface-container-highest disabled:opacity-30 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="px-unit-3 py-unit-1 font-label-md text-label-md bg-primary text-on-primary rounded-lg">1</span>
+<button class="px-unit-3 py-unit-1 font-label-md text-label-md hover:bg-surface-container-high rounded-lg">2</button>
+<button class="px-unit-3 py-unit-1 font-label-md text-label-md hover:bg-surface-container-high rounded-lg">3</button>
+<button class="p-unit-2 border border-outline-variant rounded-lg bg-surface-container-lowest hover:bg-surface-container-highest">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Additional Help/Info Box -->
+<div class="mt-unit-8 grid grid-cols-1 md:grid-cols-2 gap-unit-6">
+<div class="bg-primary-container p-unit-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md text-on-primary-container mb-unit-2">Automate Payments</h4>
+<p class="font-body-md text-body-md text-on-primary-container/80 mb-unit-4">Connect your bank account to automate monthly residential collection and receipt generation.</p>
+<button class="bg-secondary text-on-secondary px-unit-6 py-unit-3 rounded-full font-label-md text-label-md hover:scale-105 transition-transform">Get Started</button>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-on-primary-container/5 group-hover:rotate-12 transition-transform duration-500">account_balance</span>
+</div>
+<div class="bg-secondary-container p-unit-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md text-on-secondary-container mb-unit-2">Tax Season Export</h4>
+<p class="font-body-md text-body-md text-on-secondary-container/80 mb-unit-4">Generate a comprehensive audit report of all receipts for the current fiscal year.</p>
+<button class="bg-primary text-on-primary px-unit-6 py-unit-3 rounded-full font-label-md text-label-md hover:scale-105 transition-transform">Download Report</button>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-on-secondary-container/5 group-hover:scale-110 transition-transform duration-500">description</span>
+</div>
+</div>
+</section>
+<!-- Bottom padding for mobile visibility -->
+<div class="h-unit-16 md:hidden"></div>
+</main>
+<!-- Mobile Bottom Navigation (Hidden on desktop) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-unit-16 bg-surface-container-lowest border-t border-outline-variant z-50 flex items-center justify-around px-unit-4 shadow-2xl">
+<a class="flex flex-col items-center gap-0.5 text-outline" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-0.5 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-[10px] font-bold">Receipts</span>
+</a>
+<a class="flex flex-col items-center gap-0.5 text-outline" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-[10px] font-medium">Expenses</span>
+</a>
+<a class="flex flex-col items-center gap-0.5 text-outline" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple interactivity for demonstration
+        document.addEventListener('DOMContentLoaded', () => {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', (e) => {
+                    // Don't trigger if an action button was clicked
+                    if (e.target.closest('button')) return;
+                    
+                    console.log('Row details view requested');
+                    // In a real app, this would open a modal or navigate to detail page
+                });
+            });
+        });
+    </script>
+</body></html>

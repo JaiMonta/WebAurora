@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ResidAurora | Pago Seguro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#00513a",
+                    "on-error-container": "#93000a",
+                    "secondary": "#1b6b4f",
+                    "on-primary-fixed-variant": "#224c5b",
+                    "primary-fixed": "#bfe9fc",
+                    "outline": "#71787c",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "surface-tint": "#3b6474",
+                    "tertiary-fixed": "#e9ddff",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface-variant": "#41484b",
+                    "secondary-fixed-dim": "#8bd6b4",
+                    "on-tertiary-fixed": "#23005c",
+                    "primary-fixed-dim": "#a3cddf",
+                    "surface-container": "#e7eeff",
+                    "secondary-fixed": "#a6f2cf",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#247155",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "inverse-primary": "#a3cddf",
+                    "on-tertiary-container": "#af8fff",
+                    "surface-dim": "#cfdaf2",
+                    "inverse-on-surface": "#ecf1ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#002115",
+                    "on-secondary": "#ffffff",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#dee8ff",
+                    "inverse-surface": "#263143",
+                    "on-primary-fixed": "#001f29",
+                    "primary-container": "#0f3d4c",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#111c2d",
+                    "tertiary": "#2c006e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#002632",
+                    "surface-bright": "#f9f9ff",
+                    "secondary-container": "#a6f2cf",
+                    "tertiary-container": "#4500a5",
+                    "on-background": "#111c2d",
+                    "on-primary-container": "#7fa8b9",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c1c7cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit-6": "24px",
+                    "unit-12": "48px",
+                    "unit-8": "32px",
+                    "unit-1": "4px",
+                    "unit-3": "12px",
+                    "container-max": "1280px",
+                    "unit-4": "16px",
+                    "unit-2": "8px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "unit-16": "64px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9ff;
+            color: #111c2d;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #E2E8F0;
+        }
+        .payment-method-radio:checked + label {
+            border-color: #002632;
+            background-color: #f0f3ff;
+            box-shadow: 0 0 0 1px #002632;
+        }
+    </style>
+</head>
+<body class="bg-background">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center px-gutter w-full h-unit-16 sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant">
+<div class="flex items-center gap-unit-4">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">ResidAurora</span>
+</div>
+<div class="hidden md:flex items-center gap-unit-6">
+<nav class="flex gap-unit-8 h-full items-center">
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors duration-200 px-unit-2 py-unit-1" href="#">Panel</a>
+<a class="text-primary font-bold border-b-2 border-primary py-unit-1" href="#">Pagos</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors duration-200 px-unit-2 py-unit-1" href="#">Recibos</a>
+</nav>
+</div>
+<div class="flex items-center gap-unit-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-all">settings</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant cursor-pointer active:opacity-70 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Una foto profesional de un administrador de propiedades en un entorno de oficina moderno y bien iluminado. La persona sonríe cálidamente, vistiendo atuendo informal de negocios. El fondo presenta líneas arquitectónicas suaves y plantas de interior exuberantes, reforzando el compromiso de la marca ResidAurora con la calidad y la estabilidad arquitectónica. La iluminación es suave y natural, enfatizando una estética confiable y profesional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgpq4w9YTkn4kX0VRJOdXnMjmEof9SOnTQPFRO6Eh__CqJtcA4tSx8-06m-1CZMAfUR7kF6jjpHO--oDf4Ol2S4zEdKbzSCUY8bOiXne5FVBHRXGGzph3vMp-lssdUni8z05wjPchSdN3WK7U5PkQ5dG3tRM_ywNkHQP4urngOAKcCQVWla2RNo_Cb9Mq0tgPonmsMWCy_pnyIp5LXVeSW9UcS-yG0Ex1oaLjEZP2dcVnGy-_Nl8g6gcMuD7Zfcj2hP_fLXUumCTU"/>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-gutter py-unit-8 md:flex gap-unit-8">
+<!-- Side Navigation (Desktop Only) -->
+<aside class="hidden md:flex flex-col w-64 shrink-0 space-y-unit-2">
+<div class="flex flex-col space-y-1 mb-unit-6">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Resumen de cuenta</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Gestione las finanzas de su residencia</p>
+</div>
+<nav class="space-y-unit-2">
+<a class="flex items-center gap-unit-3 text-on-surface-variant/80 px-unit-4 py-unit-3 hover:bg-on-primary-container/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Panel</span>
+</a>
+<a class="flex items-center gap-unit-3 bg-secondary text-on-secondary rounded-xl px-unit-4 py-unit-3 shadow-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Pagos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-surface-variant/80 px-unit-4 py-unit-3 hover:bg-on-primary-container/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Recibos</span>
+</a>
+<a class="flex items-center gap-unit-3 text-on-surface-variant/80 px-unit-4 py-unit-3 hover:bg-on-primary-container/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label-md text-label-md">Gastos</span>
+</a>
+</nav>
+<div class="mt-auto pt-unit-12 border-t border-outline-variant space-y-unit-2">
+<a class="flex items-center gap-unit-3 text-on-surface-variant/80 px-unit-4 py-unit-3 hover:bg-on-primary-container/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Soporte</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<section class="flex-1 space-y-unit-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-unit-4">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-2">Pago Seguro</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Complete su transacción para la Unidad 402B — Torres Aurora.</p>
+</div>
+<div class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-unit-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+<span class="font-label-md text-label-md">Seguridad Bancaria</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-unit-8">
+<!-- Left Column: Payment Details -->
+<div class="lg:col-span-7 space-y-unit-6">
+<!-- Outstanding Amount Card -->
+<div class="bg-surface-container-low rounded-xl p-unit-6 border border-outline-variant relative overflow-hidden">
+<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Saldo Pendiente</span>
+<div class="font-headline-xl text-[48px] font-black text-primary mt-2">$2.450,00</div>
+<div class="flex items-center gap-2 mt-2 text-error font-medium">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-body-sm font-body-sm">Vence en 3 días</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-unit-4 rounded-xl border border-outline-variant">
+<span class="font-label-sm text-label-sm text-outline block mb-1">Periodo de Facturación</span>
+<span class="font-body-md text-body-md font-semibold">01 Oct — 31 Oct, 2023</span>
+</div>
+</div>
+<!-- Abstract Background Decoration -->
+<div class="absolute -right-8 -bottom-8 opacity-5">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'wght' 700;">payments</span>
+</div>
+</div>
+<!-- Payment Method Selection -->
+<div class="bg-white rounded-xl border border-outline-variant p-unit-6">
+<h2 class="font-headline-md text-headline-md text-primary mb-unit-6">Elija el Método de Pago</h2>
+<div class="space-y-unit-4">
+<!-- Credit Card Option -->
+<input checked="" class="hidden payment-method-radio" id="card" name="payment_method" type="radio"/>
+<label class="flex items-center justify-between p-unit-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-all group" for="card">
+<div class="flex items-center gap-unit-4">
+<div class="w-12 h-12 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">credit_card</span>
+</div>
+<div>
+<span class="font-label-md text-label-md block text-primary">Tarjeta de Crédito o Débito</span>
+<span class="font-body-sm text-body-sm text-outline">Visa, Mastercard, AMEX</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">radio_button_checked</span>
+</label>
+<!-- Bank Transfer Option -->
+<input class="hidden payment-method-radio" id="bank" name="payment_method" type="radio"/>
+<label class="flex items-center justify-between p-unit-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-low transition-all group" for="bank">
+<div class="flex items-center gap-unit-4">
+<div class="w-12 h-12 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<div>
+<span class="font-label-md text-label-md block text-primary">Transferencia Bancaria</span>
+<span class="font-body-sm text-body-sm text-outline">Débito directo vía ACH o Transferencia</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">radio_button_checked</span>
+</label>
+</div>
+<!-- Card Entry Details (Conditional Layout) -->
+<div class="mt-unit-8 space-y-unit-4" id="card-details">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-outline uppercase ml-1">Nombre del Titular</label>
+<input class="w-full bg-white border border-outline-variant rounded-xl px-unit-4 py-3 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all" placeholder="Juan Pérez Residente" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-outline uppercase ml-1">Número de Tarjeta</label>
+<div class="relative">
+<input class="w-full bg-white border border-outline-variant rounded-xl px-unit-4 py-3 pl-12 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all" placeholder="**** **** **** 4242" type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">credit_card</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-unit-4">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-outline uppercase ml-1">Fecha de Expiración</label>
+<input class="w-full bg-white border border-outline-variant rounded-xl px-unit-4 py-3 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all" placeholder="MM/AA" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-outline uppercase ml-1">CVV</label>
+<input class="w-full bg-white border border-outline-variant rounded-xl px-unit-4 py-3 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all" placeholder="***" type="password"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Summary & Confirmation -->
+<div class="lg:col-span-5 space-y-unit-6">
+<div class="bg-primary text-on-primary rounded-xl p-unit-6 shadow-xl sticky top-24 overflow-hidden">
+<h3 class="font-headline-md text-headline-md mb-unit-6">Resumen del Pago</h3>
+<div class="space-y-unit-3 mb-unit-6">
+<div class="flex justify-between items-center opacity-80">
+<span class="font-body-md text-body-md">Alquiler Mensual</span>
+<span class="font-body-md text-body-md">$2.200,00</span>
+</div>
+<div class="flex justify-between items-center opacity-80">
+<span class="font-body-md text-body-md">Gasto de Mantenimiento</span>
+<span class="font-body-md text-body-md">$150,00</span>
+</div>
+<div class="flex justify-between items-center opacity-80">
+<span class="font-body-md text-body-md">Recargo de Servicios</span>
+<span class="font-body-md text-body-md">$100,00</span>
+</div>
+<div class="pt-unit-3 border-t border-on-primary/20 flex justify-between items-center">
+<span class="font-label-md text-label-md">Total a Pagar</span>
+<span class="font-headline-md text-headline-md font-bold">$2.450,00</span>
+</div>
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container h-12 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all duration-200" onclick="simulatePayment(this)">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+                        Confirmar y Pagar Seguro
+                    </button>
+<div class="mt-unit-6 flex items-center justify-center gap-4 grayscale opacity-50">
+<img class="h-6" data-alt="Logotipo limpio y minimalista de Visa." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMlMRevh3ERJX14HhVS8xQVHNO5jTHT7Hd3Iy1dt2UXh4XZ99kwMFzha-yQU9zyG2g-2OyXAXeAKq6VzPg3UjRsAOa752tCYudOVpkJ1KhhUrJbC5GVF6pySPmnB3PM2TuqJdxXaU_aZoavWREl2XiUMS3QR7bJxjtOSJR65dDphzlILY1LDLhr9LmZwAIKgUa9OiJfCFfgrY-jZ_c2uFDSHbhV5MqG3xfuVJHqFSp2HSh72dFD5tl5A-qSQJgeEzJDgpNiGojipo"/>
+<img class="h-6" data-alt="Logotipo limpio y minimalista de Mastercard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUFa-uTZDmYy4YBu5sOdnWKyXjHVfmTr2T3rczjMoEryqCi0Nmx2UU46z2iGFM5hyRHMCWVoUDgRRrHIN7sBRoWf5V6DN02kuXiUEVuSvsJzd3c-NyvD_hCD2kDnR6EYmQ2Nia3caA8DroGevxIpEdrLVHs_mU4n0OyEu2LBEq7DawGfpd3eRRTnkFF4heS6ZFnMP4OuphGxj-n-yZluMYYywn_eaQc_nCGUscJJP7Y1BEWGdj37VQ2q4yXjG1zxv1_PGNOdisYZM"/>
+<img class="h-6" data-alt="Logotipo limpio y minimalista de American Express." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHAS5ePWeHCzFine_-mafUy2AuVz-TDGBiZpIfr32Jgq3l3In0j3Zr32Hicb4yvIDBM-zRzJ2w4qvD_gnNAtLlAAZ-KCQiv7DSavbe4fxY-fsumntAJ9qzo0tpe-MJ2tLS7nN4CLdb4Ngp7PQShEPZk2BrYz1kQzk0_RaCyV5CZP01c2koC3ht8MRxOqQNckSD0ytxuqYVatE_wjOZ9U6_cLomzgj-WpUgNLqneMQ4OKrB6qReE5i2WhZEjZUUzTwK-RAOXCEXd_s"/>
+<img class="h-6" data-alt="Insignia de seguridad para asegurar a los usuarios sobre la seguridad de los pagos." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGwyAYynJATK7E6wOJ2I1YJWk3Hw49xY1yfeZOlkw1wR4jVFt4IMA_4hNOq7pF17k6ojFLdcc3Z4jZeXbEL1ic1m7jP3DAVptwRBjVRzPSllhgon2JQo2vsygbjjHpm063tRwsgycnf-gZXG8MeuFLcN7ECWdAw_wcm9Gf_5yTAshyCOtjA0j_OieoTxdiMr5x9xgVM7mtMegAmbQowvCAOVVd6aNJp8mvRQ6YdZ7pcMMxVmzr8RORA_y36TgB6c3frOcuaXfld1o"/>
+</div>
+<!-- Atmospheric background element -->
+<div class="absolute top-0 right-0 p-unit-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]">shield</span>
+</div>
+</div>
+<!-- Security Info Card -->
+<div class="bg-surface-container-highest/30 rounded-xl p-unit-4 border border-outline-variant flex gap-unit-4 items-start">
+<span class="material-symbols-outlined text-primary">verified</span>
+<div>
+<span class="font-label-md text-label-md block text-primary">Cumple con PCI DSS</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Su transacción está protegida por encriptación SSL de 256 bits y el Protocolo de Protección contra Fraudes de ResidAurora.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Success Modal (Hidden by default) -->
+<div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-gutter" id="success-overlay">
+<div class="bg-white rounded-2xl max-w-md w-full p-unit-8 text-center shadow-2xl scale-95 opacity-0 transition-all duration-500 transform" id="success-modal">
+<div class="w-20 h-20 bg-secondary-container rounded-full flex items-center justify-center mx-auto mb-unit-6">
+<span class="material-symbols-outlined text-secondary text-5xl">check_circle</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Pago Exitoso</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-unit-8">El recibo #RA-99281 ha sido enviado a su correo electrónico. Su saldo está ahora actualizado.</p>
+<button class="w-full bg-primary text-on-primary h-12 rounded-xl font-bold hover:opacity-90 transition-opacity" onclick="closeModal()">Volver al Panel</button>
+</div>
+</div>
+<script>
+    function simulatePayment(btn) {
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Procesando...';
+        
+        // Artificial delay to simulate processing
+        setTimeout(() => {
+            const overlay = document.getElementById('success-overlay');
+            const modal = document.getElementById('success-modal');
+            
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('scale-95', 'opacity-0');
+                modal.classList.add('scale-100', 'opacity-100');
+            }, 50);
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 2000);
+    }
+
+    function closeModal() {
+        const overlay = document.getElementById('success-overlay');
+        const modal = document.getElementById('success-modal');
+        
+        modal.classList.add('scale-95', 'opacity-0');
+        modal.classList.remove('scale-100', 'opacity-100');
+        
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+        }, 300);
+    }
+
+    // Toggle Payment Detail Visibility
+    const radios = document.querySelectorAll('input[name="payment_method"]');
+    const cardDetails = document.getElementById('card-details');
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.id === 'card') {
+                cardDetails.classList.remove('opacity-30', 'pointer-events-none');
+            } else {
+                cardDetails.classList.add('opacity-30', 'pointer-events-none');
+            }
+        });
+    });
+</script>
+</body></html>
