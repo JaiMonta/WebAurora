@@ -1,156 +1,141 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { 
-  PlusCircle, 
-  Trash2, 
-  Save, 
-  AlertCircle,
-  RefreshCw,
-  Flame,
-  Printer
-} from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, X, RefreshCw } from 'lucide-react';
 
 export default function Gastos() {
-  const [periodo, setPeriodo] = useState('2026-07');
-  const [items, setItems] = useState([]);
+  const [gastos, setGastos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [mensaje, setMensaje] = useState(null);
+  const [periodo, setPeriodo] = useState('2026-07');
+  const [editingId, setEditingId] = useState(null);
 
-  // Plantilla base sincronizada con tu estructura de Supabase
-  const plantillaBase = [
-    { codigo: 'GC001', descripcion: 'HONORARIOS LOURDES GARCIA', monto_usd: 180, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC019', descripcion: 'Aceite para ascensor.', monto_usd: 15, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC005', descripcion: 'ELECTRICIDAD + Relleno Sanitario', monto_usd: 160, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC006', descripcion: 'HIDROCENTRO', monto_usd: 95, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC008', descripcion: 'Bombillos normales y Led.', monto_usd: 15, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC010', descripcion: 'MANTENIMIENTO ASCENSOR', monto_usd: 40, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC011', descripcion: 'Compra cilindro puerta principal.', monto_usd: 20, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC003', descripcion: 'Productos de limpieza', monto_usd: 95, categoria: 'GASTO_COMUN' },
-    { codigo: 'GNC03', descripcion: 'Administración 150 $', monto_usd: 230, categoria: 'GASTO_COMUN' },
-    { codigo: 'GC016', descripcion: 'Otros gastos comunes', monto_usd: 0, categoria: 'GASTO_COMUN' },
-    { codigo: 'ING001', descripcion: 'Cuota por alquiler de conserjería', monto_usd: 85, categoria: 'INGRESO_EXTRA' },
-    { codigo: 'GNC04', descripcion: 'Impresión de recibos', monto_usd: 2, categoria: 'GASTO_NO_COMUN' },
-    { codigo: 'GNC05', descripcion: 'Servicio de Gas', monto_usd: 0, categoria: 'GASTO_NO_COMUN' },
-    { codigo: 'GNC01', descripcion: 'Fondo de Reserva 10%', monto_usd: 0, categoria: 'CALCULADO' }
-  ];
+  const [formData, setFormData] = useState({
+    codigo: 'GC0001',
+    descripcion: '',
+    monto_usd: '',
+    categoria: 'GASTO_COMUN',
+    periodo: '2026-07',
+    unidades_reparto: 35
+  });
 
   useEffect(() => {
-    cargarGastosDelPeriodo();
+    cargarGastos();
   }, [periodo]);
 
-  async function cargarGastosDelPeriodo() {
+  async function cargarGastos() {
     try {
       setLoading(true);
-      setMensaje(null);
-
-      const { data: gastosGuardados, error } = await supabase
+      const { data, error } = await supabase
         .from('gastos_comunes')
         .select('*')
-        .eq('periodo', periodo);
+        .eq('periodo', periodo)
+        .order('id', { ascending: true });
 
       if (error) throw error;
-
-      if (gastosGuardados && gastosGuardados.length > 0) {
-        // Normalizar los datos leídos de Supabase
-        const mapeados = gastosGuardados.map(g => ({
-          ...g,
-          monto_usd: Number(g.monto_usd || g.monto || 0),
-          descripcion: g.descripcion || g.concepto || ''
-        }));
-        setItems(mapeados);
-      } else {
-        setItems(plantillaBase);
-      }
+      setGastos(data || []);
     } catch (err) {
-      console.error('Error cargando gastos:', err.message);
-      setMensaje({ tipo: 'error', texto: err.message });
-      setItems(plantillaBase);
+      console.error('Error al cargar gastos:', err.message);
     } finally {
       setLoading(false);
     }
   }
 
-  const handleMontoChange = (index, nuevoMonto) => {
-    const nuevosItems = [...items];
-    nuevosItems[index].monto_usd = Number(nuevoMonto) || 0;
-    setItems(nuevosItems);
-  };
-
-  const handleDescripcionChange = (index, nuevaDescripcion) => {
-    const nuevosItems = [...items];
-    nuevosItems[index].descripcion = nuevaDescripcion;
-    setItems(nuevosItems);
-  };
-
-  const agregarFila = () => {
-    setItems([
-      ...items,
-      { codigo: `EXTRA-${items.length + 1}`, descripcion: '', monto_usd: 0, categoria: 'GASTO_COMUN' }
-    ]);
-  };
-
-  const eliminarFila = (index) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
-
-  // --- CÁLCULOS SEGÚN REGLAS DE NEGOCIO ---
-  const totalGastosComunesDirectos = items
-    .filter(i => i.categoria === 'GASTO_COMUN' && i.codigo !== 'GNC01')
-    .reduce((acc, curr) => acc + Number(curr.monto_usd || 0), 0);
-
-  const totalIngresos = items
-    .filter(i => i.categoria === 'INGRESO_EXTRA')
-    .reduce((acc, curr) => acc + Number(curr.monto_usd || 0), 0);
-
-  // Fondo de Reserva = 10% * (Gastos Totales - Ingresos Extra)
-  const baseFondo = Math.max(0, totalGastosComunesDirectos - totalIngresos);
-  const fondoReservaCalculado = baseFondo * 0.10;
-
-  // Total Común Neto a Repartir por Alícuota
-  const totalNetoComunRepartir = (totalGastosComunesDirectos - totalIngresos) + fondoReservaCalculado;
-
-  // Guardar en Supabase usando 'monto_usd' y 'descripcion'
-  async function guardarGastos() {
-    try {
-      setSaving(true);
-      setMensaje(null);
-
-      // Limpiar periodo anterior
-      await supabase.from('gastos_comunes').delete().eq('periodo', periodo);
-
-      const registros = items.map(item => {
-        const desc = item.descripcion || item.concepto || '';
-
-        if (item.codigo === 'GNC01' || item.categoria === 'CALCULADO') {
-          return {
-            periodo,
-            codigo: item.codigo,
-            descripcion: desc,
-            monto_usd: fondoReservaCalculado,
-            categoria: 'CALCULADO'
-          };
-        }
-        return {
-          periodo,
-          codigo: item.codigo,
-          descripcion: desc,
-          monto_usd: Number(item.monto_usd) || 0,
-          categoria: item.categoria
-        };
-      });
-
-      const { error } = await supabase.from('gastos_comunes').insert(registros);
-      if (error) throw error;
-
-      setMensaje({ tipo: 'exito', texto: `¡Relación de gastos para el período ${periodo} guardada correctamente!` });
-    } catch (err) {
-      console.error('Error guardando gastos:', err.message);
-      setMensaje({ tipo: 'error', texto: err.message });
-    } finally {
-      setSaving(false);
+  // Sugerir prefijo de código al cambiar de categoría
+  const handleCategoriaChange = (nuevaCat) => {
+    let codSugerido = formData.codigo;
+    if (!editingId) {
+      if (nuevaCat === 'GASTO_COMUN') codSugerido = 'GC0001';
+      else if (nuevaCat === 'GASTO_NO_COMUN') codSugerido = 'GNC01';
+      else if (nuevaCat === 'INGRESO_EXTRA') codSugerido = 'ING01';
     }
-  }
+
+    setFormData(prev => ({
+      ...prev,
+      categoria: nuevaCat,
+      codigo: codSugerido
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.codigo || !formData.descripcion || !formData.monto_usd) {
+      alert('Por favor complete el código, la descripción y el monto.');
+      return;
+    }
+
+    try {
+      const esNoComun = formData.categoria === 'GASTO_NO_COMUN';
+      const numUnidades = esNoComun 
+        ? (parseInt(formData.unidades_reparto, 10) || 35) 
+        : null;
+
+      const payload = {
+        codigo: formData.codigo.trim().toUpperCase(),
+        descripcion: formData.descripcion,
+        monto_usd: parseFloat(formData.monto_usd) || 0,
+        categoria: formData.categoria,
+        periodo: periodo,
+        unidades_reparto: numUnidades
+      };
+
+      if (editingId) {
+        const { error } = await supabase
+          .from('gastos_comunes')
+          .update(payload)
+          .eq('id', editingId);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('gastos_comunes')
+          .insert([payload]);
+
+        if (error) throw error;
+      }
+
+      resetForm();
+      cargarGastos();
+    } catch (err) {
+      console.error('Error al guardar:', err);
+      alert(`Error guardando el registro: ${err.message || 'Revisa la consola'}`);
+    }
+  };
+
+  const handleEdit = (gasto) => {
+    setEditingId(gasto.id);
+    const esNoComun = gasto.categoria === 'GASTO_NO_COMUN';
+
+    setFormData({
+      codigo: gasto.codigo || (esNoComun ? 'GNC01' : 'GC0001'),
+      descripcion: gasto.descripcion || '',
+      monto_usd: gasto.monto_usd || '',
+      categoria: gasto.categoria || 'GASTO_COMUN',
+      periodo: gasto.periodo || periodo,
+      unidades_reparto: esNoComun ? (gasto.unidades_reparto || 35) : 35
+    });
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('¿Estás seguro de eliminar este registro?')) return;
+    try {
+      const { error } = await supabase.from('gastos_comunes').delete().eq('id', id);
+      if (error) throw error;
+      cargarGastos();
+    } catch (err) {
+      console.error('Error eliminando:', err.message);
+    }
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({
+      codigo: 'GC0001',
+      descripcion: '',
+      monto_usd: '',
+      categoria: 'GASTO_COMUN',
+      periodo: periodo,
+      unidades_reparto: 35
+    });
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
@@ -158,152 +143,196 @@ export default function Gastos() {
       {/* Encabezado */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Módulo de Gastos e Ingresos</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Carga mensual de conceptos comunes, no comunes e ingresos extra</p>
+          <h1 className="text-2xl font-bold text-slate-800">Gestión de Gastos e Ingresos</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Registro de egresos comunes, no comunes y deducciones</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Período Mensual:</label>
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-bold text-slate-500 uppercase">Período:</label>
           <input 
             type="month" 
             value={periodo}
-            onChange={(e) => setPeriodo(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            onChange={(e) => {
+              setPeriodo(e.target.value);
+              setFormData(prev => ({ ...prev, periodo: e.target.value }));
+            }}
+            className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800"
           />
         </div>
       </div>
 
-      {/* Tarjetas Resumen */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-          <span className="text-xs text-slate-400 font-semibold uppercase block">Gastos Operativos</span>
-          <span className="text-2xl font-bold text-slate-800 mt-1 block">${totalGastosComunesDirectos.toFixed(2)}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Formulario */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 h-fit">
+          <h2 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+            {editingId ? <Edit2 size={18} className="text-indigo-600" /> : <Plus size={18} className="text-indigo-600" />}
+            {editingId ? 'Editar Registro' : 'Nuevo Registro'}
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Código</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="GC0001"
+                  value={formData.codigo}
+                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Categoría</label>
+                <select
+                  value={formData.categoria}
+                  onChange={(e) => handleCategoriaChange(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="GASTO_COMUN">Gasto Común (Alícuota)</option>
+                  <option value="GASTO_NO_COMUN">Gasto No Común (Reparto Fijo)</option>
+                  <option value="INGRESO_EXTRA">Ingreso / Deducción (Renta)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Descripción</label>
+              <input
+                type="text"
+                required
+                placeholder="Ej. Honorarios Profesionales / Administración"
+                value={formData.descripcion}
+                onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Monto (USD)</label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                placeholder="0.00"
+                value={formData.monto_usd}
+                onChange={(e) => setFormData({ ...formData, monto_usd: e.target.value })}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            {formData.categoria === 'GASTO_NO_COMUN' && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-1.5">
+                <label className="block text-xs font-bold text-amber-900">
+                  ¿Entre cuántas unidades se divide este gasto?
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={formData.unidades_reparto}
+                  onChange={(e) => setFormData({ ...formData, unidades_reparto: e.target.value })}
+                  className="w-full px-3 py-1.5 bg-white border border-amber-300 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+                <p className="text-[10px] text-amber-800 leading-tight">
+                  Cuota individual para este gasto: <span className="font-bold">${((parseFloat(formData.monto_usd || 0)) / (parseInt(formData.unidades_reparto, 10) || 1)).toFixed(2)} USD</span>
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="submit"
+                className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Save size={16} />
+                <span>{editingId ? 'Actualizar Registro' : 'Guardar Registro'}</span>
+              </button>
+
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </form>
         </div>
 
-        <div className="bg-emerald-50/60 p-5 rounded-2xl border border-emerald-100 shadow-sm">
-          <span className="text-xs text-emerald-600 font-semibold uppercase block">Ingresos Extra</span>
-          <span className="text-2xl font-bold text-emerald-700 mt-1 block">-${totalIngresos.toFixed(2)}</span>
-        </div>
-
-        <div className="bg-indigo-50/60 p-5 rounded-2xl border border-indigo-100 shadow-sm">
-          <span className="text-xs text-indigo-600 font-semibold uppercase block">Fondo Reserva (10%)</span>
-          <span className="text-2xl font-bold text-indigo-700 mt-1 block">+${fondoReservaCalculado.toFixed(2)}</span>
-        </div>
-
-        <div className="bg-slate-900 text-white p-5 rounded-2xl shadow-md">
-          <span className="text-xs text-slate-400 font-semibold uppercase block">Total Común a Alícuota</span>
-          <span className="text-2xl font-bold text-emerald-400 mt-1 block">${totalNetoComunRepartir.toFixed(2)}</span>
-        </div>
-      </div>
-
-      {mensaje && (
-        <div className={`p-4 rounded-xl text-sm font-medium flex items-center gap-2 ${
-          mensaje.tipo === 'exito' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
-        }`}>
-          <AlertCircle size={18} />
-          <span>{mensaje.texto}</span>
-        </div>
-      )}
-
-      {/* Tabla de Conceptos */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2">
-            <RefreshCw size={24} className="animate-spin text-indigo-600" />
-            <span>Cargando datos del período...</span>
+        {/* Tabla de Registros */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+            <span className="text-xs font-bold text-slate-600 uppercase">Registros del Período ({gastos.length})</span>
+            <button onClick={cargarGastos} className="text-slate-400 hover:text-slate-600">
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            </button>
           </div>
-        ) : (
+
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-400 tracking-wider border-b border-slate-100">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold">
                 <tr>
-                  <th className="px-6 py-3.5">Código</th>
-                  <th className="px-6 py-3.5">Descripción del Concepto</th>
-                  <th className="px-6 py-3.5 text-center">Tipo de Rubro</th>
-                  <th className="px-6 py-3.5 text-right w-44">Monto ($)</th>
-                  <th className="px-6 py-3.5 text-center w-16">Acción</th>
+                  <th className="p-3">Código</th>
+                  <th className="p-3">Descripción</th>
+                  <th className="p-3">Categoría</th>
+                  <th className="p-3 text-center">Reparto</th>
+                  <th className="p-3 text-right">Monto (USD)</th>
+                  <th className="p-3 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {items.map((item, idx) => {
-                  const esFondo = item.categoria === 'CALCULADO' || item.codigo === 'GNC01';
-                  const esIngreso = item.categoria === 'INGRESO_EXTRA';
-                  const esNoComun = item.categoria === 'GASTO_NO_COMUN';
+                {gastos.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="p-8 text-center text-slate-400">No hay gastos registrados en este período.</td>
+                  </tr>
+                ) : (
+                  gastos.map((g) => {
+                    const esNoComun = g.categoria === 'GASTO_NO_COMUN';
+                    const esIngreso = g.categoria === 'INGRESO_EXTRA';
+                    const cantUnidades = g.unidades_reparto || 35;
+                    const cuotaInd = (g.monto_usd || 0) / cantUnidades;
 
-                  return (
-                    <tr key={idx} className={esFondo ? 'bg-indigo-50/40 font-semibold' : 'hover:bg-slate-50/80'}>
-                      <td className="px-6 py-3 font-mono text-xs font-bold text-slate-700">{item.codigo}</td>
-                      <td className="px-6 py-3">
-                        <input
-                          type="text"
-                          value={item.descripcion || ''}
-                          onChange={(e) => handleDescripcionChange(idx, e.target.value)}
-                          disabled={esFondo}
-                          className="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:outline-none py-1 text-slate-800"
-                        />
-                      </td>
-                      <td className="px-6 py-3 text-center">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          esIngreso 
-                            ? 'bg-emerald-100 text-emerald-800' 
-                            : esFondo 
-                            ? 'bg-indigo-100 text-indigo-800' 
-                            : esNoComun
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-slate-100 text-slate-700'
-                        }`}>
-                          {esIngreso ? 'Ingreso Extra' : esFondo ? 'Calculado (10%)' : esNoComun ? 'Gasto No Común' : 'Gasto Común'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 text-right">
-                        {esFondo ? (
-                          <span className="font-bold text-indigo-900">${fondoReservaCalculado.toFixed(2)}</span>
-                        ) : (
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={item.monto_usd}
-                            onChange={(e) => handleMontoChange(idx, e.target.value)}
-                            className="w-32 text-right bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                          />
-                        )}
-                      </td>
-                      <td className="px-6 py-3 text-center">
-                        {!esFondo && (
-                          <button
-                            onClick={() => eliminarFila(idx)}
-                            className="text-slate-400 hover:text-rose-600 transition-colors cursor-pointer p-1"
-                          >
-                            <Trash2 size={16} />
+                    return (
+                      <tr key={g.id} className="hover:bg-slate-50">
+                        <td className="p-3 font-mono font-bold text-slate-700">{g.codigo || '—'}</td>
+                        <td className="p-3 font-semibold text-slate-800">{g.descripcion || 'Sin descripción'}</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            esIngreso ? 'bg-emerald-100 text-emerald-800' :
+                            esNoComun ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {esIngreso ? 'INGRESO / DEDUCCIÓN' : esNoComun ? 'NO COMÚN' : 'COMÚN'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-center font-mono text-[11px] text-slate-500">
+                          {esNoComun ? `${cantUnidades} unid. ($${cuotaInd.toFixed(2)} c/u)` : 'Por Alícuota'}
+                        </td>
+                        <td className="p-3 text-right font-mono font-bold text-slate-800">
+                          ${Number(g.monto_usd || 0).toFixed(2)}
+                        </td>
+                        <td className="p-3 text-right space-x-2">
+                          <button onClick={() => handleEdit(g)} className="text-indigo-600 hover:text-indigo-800 p-1">
+                            <Edit2 size={14} />
                           </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                          <button onClick={() => handleDelete(g.id)} className="text-rose-600 hover:text-rose-800 p-1">
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
-        )}
-
-        {/* Acciones */}
-        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-          <button
-            onClick={agregarFila}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-200/80 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-          >
-            <PlusCircle size={15} /> Agregar Concepto Extra
-          </button>
-
-          <button
-            onClick={guardarGastos}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-50"
-          >
-            {saving ? <RefreshCw size={15} className="animate-spin" /> : <Save size={15} />}
-            <span>Guardar Relación del Mes</span>
-          </button>
         </div>
+
       </div>
 
     </div>

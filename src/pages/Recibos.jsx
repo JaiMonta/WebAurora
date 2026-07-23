@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Search, Download, RefreshCw, Flame, Printer } from 'lucide-react';
+import { Search, Download, RefreshCw } from 'lucide-react';
 
 export default function Recibos() {
   const [periodo, setPeriodo] = useState('2026-07');
@@ -34,8 +34,10 @@ export default function Recibos() {
 
       const gastosNormalizados = (dataGastos || []).map(g => ({
         ...g,
-        monto: Number(g.monto_usd || g.monto || 0),
-        concepto: g.descripcion || g.concepto || ''
+        codigo: g.codigo || '',
+        monto_usd: Number(g.monto_usd || 0),
+        descripcion: g.descripcion || 'Sin descripción',
+        unidades_reparto: g.unidades_reparto ? Number(g.unidades_reparto) : null
       }));
 
       setUnidades(dataUnidades || []);
@@ -59,43 +61,63 @@ export default function Recibos() {
     return null;
   };
 
-  // --- CÁLCULOS DETALLADOS DE TABLA ---
+  // --- CÁLCULOS DEL RECIBO ---
   const alicuota = Number(getCampo(unidadSeleccionada, ['alicuota_porcentaje', 'alicuota']) || 0);
 
-  // Gastos comunes directos
-  const gastosComunesLista = gastos.filter(g => g.categoria === 'GASTO_COMUN' && g.codigo !== 'GNC01');
-  
-  // Ingresos
+  // 1. Gastos Comunes Directos
+  const gastosComunesLista = gastos.filter(g => g.categoria === 'GASTO_COMUN');
+  const totalGastosComunes = gastosComunesLista.reduce((acc, curr) => acc + curr.monto_usd, 0);
+
+  // 2. Ingresos / Deducciones
   const ingresosLista = gastos.filter(g => g.categoria === 'INGRESO_EXTRA');
-  const totalIngresos = ingresosLista.reduce((acc, curr) => acc + curr.monto, 0);
+  const totalIngresos = ingresosLista.reduce((acc, curr) => acc + curr.monto_usd, 0);
 
-  // Subtotal Operativo
-  const totalGastosDirectos = gastosComunesLista.reduce((acc, curr) => acc + curr.monto, 0);
-  const subTotalBase = totalGastosDirectos - totalIngresos;
-  const subTotalAPagar = (subTotalBase * alicuota) / 100;
+  // 3. Gastos NO Comunes (Reparto individual por cuota fija)
+  const gastosNoComunesLista = gastos
+    .filter(g => g.categoria === 'GASTO_NO_COMUN' && g.codigo !== 'GNC04' && g.codigo !== 'GNC05')
+    .map(gnc => {
+      const cantUnid = gnc.unidades_reparto || 35;
+      const cuotaInd = gnc.monto_usd / cantUnid;
+      return {
+        ...gnc,
+        cantUnid,
+        cuotaInd
+      };
+    });
 
-  // Fondo de Reserva (10%)
+  const totalGastosNoComunesBase = gastosNoComunesLista.reduce((acc, curr) => acc + curr.monto_usd, 0);
+  const totalNoComunesUnidad = gastosNoComunesLista.reduce((acc, curr) => acc + curr.cuotaInd, 0);
+
+  // --- REGLA SOLICITADA ---
+  // Subtotal = Gastos Comunes + Gastos No Comunes - Ingresos
+  const subTotalBase = totalGastosComunes + totalGastosNoComunesBase - totalIngresos;
+  
+  // A Pagar Unidad Subtotal
+  const cuotaComunAPagar = ((totalGastosComunes - totalIngresos) * alicuota) / 100;
+  const subTotalAPagarUnidad = cuotaComunAPagar + totalNoComunesUnidad;
+
+  // Fondo de Reserva = 10% del Subtotal
   const fondoReservaBase = Math.max(0, subTotalBase) * 0.10;
   const fondoReservaAPagar = (fondoReservaBase * alicuota) / 100;
 
-  // Gastos No Comunes
-  const itemGas = gastos.find(g => g.codigo === 'GNC05' || g.concepto?.toLowerCase().includes('gas'));
-  const itemRecibo = gastos.find(g => g.codigo === 'GNC04' || g.concepto?.toLowerCase().includes('impresión'));
+  // 4. Servicios No Comunes Especiales (Gas / Impresión de Recibos)
+  const itemGas = gastos.find(g => g.codigo === 'GNC05' || g.descripcion?.toLowerCase().includes('gas'));
+  const itemRecibo = gastos.find(g => g.codigo === 'GNC04' || g.descripcion?.toLowerCase().includes('impresión'));
 
-  const montoGasTotal = itemGas ? Number(itemGas.monto || 0) : 0;
-  const montoReciboTotal = itemRecibo ? Number(itemRecibo.monto || 0) : 0;
+  const montoGasTotal = itemGas ? Number(itemGas.monto_usd || 0) : 0;
+  const montoReciboTotal = itemRecibo ? Number(itemRecibo.monto_usd || 0) : 0;
 
-  const unidadesGas = unidades.filter(u => u.apaga_gas === true);
-  const unidadesRecibo = unidades.filter(u => u.apaga_recibo === true);
+  const cantGas = itemGas?.unidades_reparto || unidades.filter(u => u.apaga_gas === true).length || 22;
+  const cantRecibo = itemRecibo?.unidades_reparto || unidades.filter(u => u.apaga_recibo === true).length || 2;
 
-  const cuotaGas = (unidadSeleccionada?.apaga_gas && unidadesGas.length > 0) ? (montoGasTotal / unidadesGas.length) : 0;
-  const cuotaRecibo = (unidadSeleccionada?.apaga_recibo && unidadesRecibo.length > 0) ? (montoReciboTotal / unidadesRecibo.length) : 0;
+  const cuotaGas = (unidadSeleccionada?.apaga_gas) ? (montoGasTotal / (cantGas || 1)) : 0;
+  const cuotaRecibo = (unidadSeleccionada?.apaga_recibo) ? (montoReciboTotal / (cantRecibo || 1)) : 0;
 
-  // Totales
-  const totalGeneralUsd = subTotalAPagar + fondoReservaAPagar + cuotaGas + cuotaRecibo;
+  // 5. TOTAL GENERAL
+  const totalGeneralBase = subTotalBase + fondoReservaBase + montoGasTotal + montoReciboTotal;
+  const totalGeneralUsd = subTotalAPagarUnidad + fondoReservaAPagar + cuotaGas + cuotaRecibo;
   const totalGeneralVes = totalGeneralUsd * tasaBcv;
 
-  // Función de impresión / Guardado en PDF
   const imprimirPDF = () => {
     window.print();
   };
@@ -110,7 +132,6 @@ export default function Recibos() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
       
-      {/* Estilos CSS Nativos para la Exportación PDF */}
       <style>{`
         @media print {
           body {
@@ -131,7 +152,7 @@ export default function Recibos() {
         }
       `}</style>
       
-      {/* Encabezado Principal */}
+      {/* Encabezado */}
       <div className="no-print flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Emisión de Recibos de Condominio</h1>
@@ -164,7 +185,7 @@ export default function Recibos() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Lista de Inmuebles Izquierda */}
+        {/* Panel Izquierdo: Lista de Inmuebles */}
         <div className="no-print bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col h-[700px]">
           <div className="p-4 border-b border-slate-100 bg-slate-50">
             <div className="relative">
@@ -205,7 +226,7 @@ export default function Recibos() {
                       <span className="text-xs text-slate-500 block truncate max-w-[160px]">{prop}</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block">{alic}% alícuota</span>
+                      <span className="text-[10px] text-slate-400 block">{alic.toFixed(2)}% alícuota</span>
                     </div>
                   </button>
                 );
@@ -214,12 +235,11 @@ export default function Recibos() {
           </div>
         </div>
 
-        {/* Panel Derecho: Plantilla del Recibo */}
+        {/* Panel Derecho: Vista Recibo */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col justify-between">
           
           {unidadSeleccionada ? (
             <div>
-              {/* VISTA DEL RECIBO FORMATO AVISO DE COBRO */}
               <div className="print-area p-6 bg-white text-slate-900 border border-slate-300 rounded-lg text-xs space-y-4">
                 
                 {/* Encabezado del Documento */}
@@ -240,7 +260,7 @@ export default function Recibos() {
                   </div>
                 </div>
 
-                {/* Tabla Detallada */}
+                {/* Tabla de Detalle */}
                 <table className="w-full border-collapse text-[11px]">
                   <thead>
                     <tr className="border-b-2 border-slate-400 bg-slate-100 text-slate-700 uppercase font-bold">
@@ -251,48 +271,65 @@ export default function Recibos() {
                   </thead>
                   <tbody className="divide-y divide-slate-200">
                     
-                    {/* Conceptos Comunes Directos */}
+                    {/* Gastos Comunes */}
                     {gastosComunesLista.map((g, i) => {
-                      const cuotaItem = (g.monto * alicuota) / 100;
+                      const cuotaItem = (g.monto_usd * alicuota) / 100;
                       return (
-                        <tr key={i}>
-                          <td className="py-1 px-2 text-slate-800">{g.concepto}</td>
-                          <td className="py-1 px-2 text-right font-mono">{g.monto.toFixed(2)}</td>
+                        <tr key={`gc-${i}`}>
+                          <td className="py-1 px-2 text-slate-800">
+                            {g.codigo ? <span className="font-mono font-bold mr-1 text-slate-500">[{g.codigo}]</span> : null}
+                            {g.descripcion}
+                          </td>
+                          <td className="py-1 px-2 text-right font-mono">{g.monto_usd.toFixed(2)}</td>
                           <td className="py-1 px-2 text-right font-mono font-semibold">{cuotaItem.toFixed(2)}</td>
                         </tr>
                       );
                     })}
 
-                    {/* Deducciones / Alquiler Conserjería */}
+                    {/* Gastos No Comunes */}
+                    {gastosNoComunesLista.map((gnc, i) => (
+                      <tr key={`gnc-${i}`}>
+                        <td className="py-1 px-2 text-slate-800">
+                          {gnc.codigo ? <span className="font-mono font-bold mr-1 text-slate-500">[{gnc.codigo}]</span> : null}
+                          {gnc.descripcion} (ENTRE {gnc.cantUnid} UNIDADES)
+                        </td>
+                        <td className="py-1 px-2 text-right font-mono">{gnc.monto_usd.toFixed(2)}</td>
+                        <td className="py-1 px-2 text-right font-mono font-semibold">{gnc.cuotaInd.toFixed(2)}</td>
+                      </tr>
+                    ))}
+
+                    {/* Deducciones / Ingresos */}
                     {ingresosLista.map((ing, i) => {
-                      const cuotaIngreso = (ing.monto * alicuota) / 100;
+                      const cuotaIngreso = (ing.monto_usd * alicuota) / 100;
                       return (
                         <tr key={`ing-${i}`} className="text-emerald-700">
-                          <td className="py-1 px-2 font-medium">Menos {ing.concepto}</td>
-                          <td className="py-1 px-2 text-right font-mono">{ing.monto.toFixed(2)}</td>
-                          <td className="py-1 px-2 text-right font-mono font-semibold">{cuotaIngreso.toFixed(2)}</td>
+                          <td className="py-1 px-2 font-medium">
+                            Menos {ing.descripcion}
+                          </td>
+                          <td className="py-1 px-2 text-right font-mono">-{ing.monto_usd.toFixed(2)}</td>
+                          <td className="py-1 px-2 text-right font-mono font-semibold">-{cuotaIngreso.toFixed(2)}</td>
                         </tr>
                       );
                     })}
 
-                    {/* Subtotal Operativo */}
+                    {/* SUB-TOTAL OPERATIVO */}
                     <tr className="font-bold bg-slate-50 border-t-2 border-slate-300">
                       <td className="py-1.5 px-2 uppercase">SUB-TOTAL</td>
                       <td className="py-1.5 px-2 text-right font-mono">{subTotalBase.toFixed(2)}</td>
-                      <td className="py-1.5 px-2 text-right font-mono text-slate-900">{subTotalAPagar.toFixed(2)}</td>
+                      <td className="py-1.5 px-2 text-right font-mono text-slate-900">{subTotalAPagarUnidad.toFixed(2)}</td>
                     </tr>
 
-                    {/* Fondo de Reserva */}
+                    {/* Fondo de Reserva 10% del Subtotal */}
                     <tr>
                       <td className="py-1 px-2 text-slate-800">Fondo de reserva 10%</td>
                       <td className="py-1 px-2 text-right font-mono">{fondoReservaBase.toFixed(2)}</td>
                       <td className="py-1 px-2 text-right font-mono font-semibold">{fondoReservaAPagar.toFixed(2)}</td>
                     </tr>
 
-                    {/* Conceptos No Comunes */}
+                    {/* Servicios especiales si aplican */}
                     {cuotaGas > 0 && (
                       <tr>
-                        <td className="py-1 px-2 text-slate-800">Servicio de Gas Residencial</td>
+                        <td className="py-1 px-2 text-slate-800">Servicio de Gas Residencial ({cantGas} UNID)</td>
                         <td className="py-1 px-2 text-right font-mono">{montoGasTotal.toFixed(2)}</td>
                         <td className="py-1 px-2 text-right font-mono font-semibold">{cuotaGas.toFixed(2)}</td>
                       </tr>
@@ -300,22 +337,22 @@ export default function Recibos() {
 
                     {cuotaRecibo > 0 && (
                       <tr>
-                        <td className="py-1 px-2 text-slate-800">Impresión de Recibos</td>
+                        <td className="py-1 px-2 text-slate-800">Impresión de Recibos ({cantRecibo} UNID)</td>
                         <td className="py-1 px-2 text-right font-mono">{montoReciboTotal.toFixed(2)}</td>
                         <td className="py-1 px-2 text-right font-mono font-semibold">{cuotaRecibo.toFixed(2)}</td>
                       </tr>
                     )}
 
-                    {/* Total a Cancelar */}
+                    {/* TOTAL A CANCELAR */}
                     <tr className="font-bold text-sm bg-slate-100 border-t-2 border-b-2 border-slate-800">
                       <td className="py-2 px-2 uppercase">TOTAL A CANCELAR</td>
-                      <td className="py-2 px-2 text-right font-mono">${(subTotalBase + fondoReservaBase).toFixed(2)}</td>
+                      <td className="py-2 px-2 text-right font-mono">${totalGeneralBase.toFixed(2)}</td>
                       <td className="py-2 px-2 text-right font-mono text-indigo-900">${totalGeneralUsd.toFixed(2)}</td>
                     </tr>
                   </tbody>
                 </table>
 
-                {/* Pie del Recibo con Datos de Pago */}
+                {/* Pie de Recibo */}
                 <div className="pt-2 border-t border-slate-300 text-[10px] space-y-1.5 text-slate-700">
                   <div className="flex justify-between font-bold text-slate-800">
                     <span>{getCampo(unidadSeleccionada, ['codigo_unidad', 'numero_inmueble'])}</span>
@@ -338,7 +375,7 @@ export default function Recibos() {
             <div className="p-12 text-center text-slate-400">Selecciona una unidad para emitir el recibo.</div>
           )}
 
-          {/* Botón Imprimir / Guardar como PDF */}
+          {/* Botón Imprimir */}
           <div className="no-print mt-6 pt-4 border-t border-slate-100 flex justify-end">
             <button 
               onClick={imprimirPDF}
