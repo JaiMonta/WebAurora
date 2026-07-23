@@ -3,9 +3,10 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
-import Alicuotas from './pages/Alicuotas';
+import Noticias from './pages/Noticias'; // <--- Importamos Noticias
+import Recibos from './pages/Recibos';
 import Gastos from './pages/Gastos';
-import Recibos from './pages/Recibos'; // <--- 1. Importación agregada
+import Alicuotas from './pages/Alicuotas';
 
 function MainApp() {
   const { user } = useAuth();
@@ -19,12 +20,16 @@ function MainApp() {
     <Layout currentTab={currentTab} setCurrentTab={setCurrentTab}>
       {currentTab === 'dashboard' && <Dashboard />}
       
-      {/* 2. Módulo de Recibos Integrado */}
+      {/* Módulo de Noticias */}
+      {currentTab === 'noticias' && <Noticias />}
+
+      {/* Módulo de Recibos */}
       {currentTab === 'recibos' && <Recibos />}
       
-      {/* 3. Módulo de Gastos e Ingresos Integrado */}
+      {/* Módulo de Gastos e Ingresos */}
       {currentTab === 'gastos' && <Gastos />}
 
+      {/* Módulo de Inmuebles / Alícuotas */}
       {currentTab === 'alicuotas' && <Alicuotas />}
     </Layout>
   );
