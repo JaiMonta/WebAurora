@@ -9,7 +9,6 @@ import {
   User, 
   RefreshCw,
   Percent,
-  ShieldAlert,
   Lock
 } from 'lucide-react';
 
@@ -117,41 +116,6 @@ export default function Alicuotas() {
     return pesoA.numero - pesoB.numero;
   });
 
-  // Restricción Exclusiva para Administradores
-  if (!isAdmin) {
-    return (
-      <div className="max-w-4xl mx-auto py-8 sm:py-12 px-2 sm:px-4">
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl text-center space-y-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
-            <ShieldAlert size={36} />
-          </div>
-          
-          <div className="space-y-2">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">Acceso Restringido</h2>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">
-              <Lock size={14} />
-              Exclusivo para Administradores
-            </div>
-          </div>
-
-          <p className="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
-            La pantalla de <strong>Inmuebles, Alícuotas y Saldos Pendientes</strong> es de uso exclusivo para el equipo de administración del condominio.
-          </p>
-
-          <div className="pt-4 border-t border-slate-100">
-            <button
-              onClick={toggleAdminRole}
-              className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/25 transition-all cursor-pointer flex items-center justify-center gap-2"
-            >
-              <Lock size={16} />
-              <span>Activar Modo Administrador (Prueba)</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
       
@@ -160,10 +124,12 @@ export default function Alicuotas() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Inmuebles y Distribución de Alícuotas</h1>
-            <span className="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
-              <Lock size={12} />
-              ADMIN
-            </span>
+            {!isAdmin && (
+              <span className="bg-slate-100 text-slate-600 text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+                <Lock size={12} />
+                Saldos solo Admin
+              </span>
+            )}
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Total registrados: <span className="font-semibold text-slate-700">{unidades.length}</span> inmuebles (Aptos, Locales y Oficinas)
@@ -236,7 +202,7 @@ export default function Alicuotas() {
         {loading ? (
           <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2 text-xs">
             <RefreshCw size={24} className="animate-spin text-indigo-600" />
-            <span>Cargando unidades y calculando saldos pendientes...</span>
+            <span>Cargando inmuebles...</span>
           </div>
         ) : unidadesOrdenadas.length === 0 ? (
           <div className="p-12 text-center text-slate-500 space-y-2">
@@ -289,10 +255,18 @@ export default function Alicuotas() {
                           </span>
                         </td>
 
-                        <td className="px-6 py-4 text-right">
-                          <span className={`font-black text-sm ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                            ${saldoCalculado.toFixed(2)} USD
-                          </span>
+                        {/* El campo Saldo se restringe a administradores */}
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                          {isAdmin ? (
+                            <span className={`font-black text-sm ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                              ${saldoCalculado.toFixed(2)} USD
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium bg-slate-100 px-2.5 py-1 rounded-lg">
+                              <Lock size={12} className="text-slate-400" />
+                              Solo Admin
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -334,9 +308,16 @@ export default function Alicuotas() {
                         <span className="font-medium text-slate-800">{propietario}</span>
                       </div>
 
-                      <span className={`font-black text-xs ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                        {saldoCalculado > 0 ? `Saldo: $${saldoCalculado.toFixed(2)} USD` : 'Solvente ($0.00)'}
-                      </span>
+                      {/* El campo Saldo en móvil también se restringe a administradores */}
+                      {isAdmin ? (
+                        <span className={`font-black text-xs ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                          {saldoCalculado > 0 ? `Saldo: $${saldoCalculado.toFixed(2)} USD` : 'Solvente ($0.00)'}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded">
+                          <Lock size={10} /> Saldo Admin
+                        </span>
+                      )}
                     </div>
                   </div>
                 );
