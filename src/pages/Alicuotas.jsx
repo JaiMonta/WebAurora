@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import { 
@@ -13,48 +13,48 @@ import {
 } from 'lucide-react';
 
 export default function Alicuotas() {
-  const { isAdmin, toggleAdminRole } = useAuth();
+  const { isAdmin } = useAuth();
   const [unidades, setUnidades] = useState([]);
-  const [saldosPendientesMapa, setSaldosPendientesMapa] = useState({});
+  const [gastos, setGastos] = useState([]);
+  const [cobranzas, setCobranzas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('todos');
+  const [periodo] = useState('2026-07');
 
   useEffect(() => {
-    cargarUnidadesYSaldos();
+    cargarDatosCompleto();
   }, []);
 
-  async function cargarUnidadesYSaldos() {
+  async function cargarDatosCompleto() {
     try {
       setLoading(true);
       setErrorMsg(null);
       
+      // 1. Cargar Unidades
       const { data: dataUnidades, error: errUnidades } = await supabase
         .from('unidades')
         .select('*');
 
       if (errUnidades) throw errUnidades;
 
-      // Calcular suma total de pagos pendientes por unidad desde la tabla cobranzas
-      const { data: dataCobranzas, error: errCobranzas } = await supabase
+      // 2. Cargar Gastos Comunes del período
+      const { data: dataGastos } = await supabase
+        .from('gastos_comunes')
+        .select('*')
+        .eq('periodo', periodo);
+
+      // 3. Cargar Histórico de Cobranzas
+      const { data: dataCobranzas } = await supabase
         .from('cobranzas')
         .select('*');
 
-      const mapa = {};
-      if (!errCobranzas && dataCobranzas) {
-        dataCobranzas.forEach(c => {
-          if (c.estado !== 'aprobado') {
-            const cod = String(c.id_inmueble || '').toUpperCase().trim();
-            mapa[cod] = (mapa[cod] || 0) + Number(c.monto_usd || 0);
-          }
-        });
-      }
-
-      setSaldosPendientesMapa(mapa);
       setUnidades(dataUnidades || []);
+      setGastos(dataGastos || []);
+      setCobranzas(dataCobranzas || []);
     } catch (err) {
-      console.error('Error al cargar unidades y saldos:', err.message);
+      console.error('Error al cargar datos completos de inmuebles:', err.message);
       setErrorMsg(err.message);
     } finally {
       setLoading(false);
@@ -62,11 +62,73 @@ export default function Alicuotas() {
   }
 
   const getCampo = (item, keys) => {
+    if (!item) return null;
     for (let key of keys) {
       if (item[key] !== undefined && item[key] !== null) return item[key];
     }
     return null;
   };
+
+  const normalizarCod = (cod) => String(cod || '').toUpperCase().replace(/[\s\.]/g, '');
+
+  // Función para calcular el recibo mensual estimado de una unidad
+  const calcularReciboEstimado = (unidad) => {
+    const alicuota = Number(getCampo(unidad, ['alicuota_porcentaje', 'alicuota', 'porcentaje']) || 2.857);
+    if (!gastos || gastos.length === 0) {
+      return Number((45.00 * (alicuota / 2.857)).toFixed(2));
+    }
+
+    const comunes = gastos.filter(g => g.categoria === 'GASTO_COMUN');
+    const totalComunes = comunes.reduce((acc, curr) => acc + Number(curr.monto_usd || 0), 0);
+
+    const ingresos = gastos.filter(g => g.categoria === 'INGRESO_EXTRA');
+    const totalIngresos = ingresos.reduce((acc, curr) => acc + Number(curr.monto_usd || 0), 0);
+
+    const noComunes = gastos.filter(g => g.categoria === 'GASTO_NO_COMUN' && g.codigo !== 'GNC04' && g.codigo !== 'GNC05');
+    const totalNoComunesUnid = noComunes.reduce((acc, curr) => {
+      const cant = Number(curr.unidades_reparto || 35);
+      return acc + (Number(curr.monto_usd || 0) / cant);
+    }, 0);
+
+    const baseComun = totalComunes - totalIngresos;
+    const cuotaComun = (baseComun * alicuota) / 100;
+    const fondoReserva = (Math.max(0, baseComun) * 0.10 * alicuota) / 100;
+
+    const itemGas = gastos.find(g => g.codigo === 'GNC05' || g.descripcion?.toLowerCase().includes('gas'));
+    const itemRecibo = gastos.find(g => g.codigo === 'GNC04' || g.descripcion?.toLowerCase().includes('impresión'));
+
+    const cuotaGas = (unidad.apaga_gas && itemGas) ? (Number(itemGas.monto_usd || 0) / Number(itemGas.unidades_reparto || 22)) : 0;
+    const cuotaRecibo = (unidad.apaga_recibo && itemRecibo) ? (Number(itemRecibo.monto_usd || 0) / Number(itemRecibo.unidades_reparto || 2)) : 0;
+
+    const totalUsd = Math.max(0, cuotaComun + totalNoComunesUnid + fondoReserva + cuotaGas + cuotaRecibo);
+    return Number(totalUsd.toFixed(2));
+  };
+
+  // Cálculo consolidado de la Deuda Acumulada / Saldo Pendiente por cada unidad
+  const saldosCalculadosMapa = useMemo(() => {
+    const mapa = {};
+
+    unidades.forEach(u => {
+      const codUnidad = getCampo(u, ['codigo_unidad', 'numero_inmueble', 'unidad']) || `ID-${u.id}`;
+      const codNorm = normalizarCod(codUnidad);
+
+      const cobrosUnidad = cobranzas.filter(c => normalizarCod(c.id_inmueble) === codNorm);
+      const cobroMesActual = cobrosUnidad.find(c => c.periodo === periodo);
+      const calcMesActualUSD = calcularReciboEstimado(u);
+
+      const periodosImpagos = cobrosUnidad.filter(c => c.estado !== 'aprobado');
+      let deudaUSD = periodosImpagos.reduce((acc, c) => acc + Number(c.monto_usd || 0), 0);
+
+      // Si no existe registro explícito aprobado para el mes actual, anexar la cuota calculada del mes actual
+      if (!cobroMesActual) {
+        deudaUSD += calcMesActualUSD;
+      }
+
+      mapa[codNorm] = Number(deudaUSD.toFixed(2));
+    });
+
+    return mapa;
+  }, [unidades, gastos, cobranzas, periodo]);
 
   const obtenerPesoOrden = (codigo) => {
     const cod = String(codigo || '').toUpperCase().trim();
@@ -202,7 +264,7 @@ export default function Alicuotas() {
         {loading ? (
           <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2 text-xs">
             <RefreshCw size={24} className="animate-spin text-indigo-600" />
-            <span>Cargando inmuebles...</span>
+            <span>Consolidando saldos adeudados por inmueble...</span>
           </div>
         ) : unidadesOrdenadas.length === 0 ? (
           <div className="p-12 text-center text-slate-500 space-y-2">
@@ -227,9 +289,9 @@ export default function Alicuotas() {
                     const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
                     const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
 
-                    const codNorm = String(codigo).toUpperCase().trim();
-                    const saldoCalculado = saldosPendientesMapa[codNorm] !== undefined 
-                      ? saldosPendientesMapa[codNorm] 
+                    const codNorm = normalizarCod(codigo);
+                    const saldoCalculado = saldosCalculadosMapa[codNorm] !== undefined 
+                      ? saldosCalculadosMapa[codNorm] 
                       : Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
 
                     return (
@@ -259,7 +321,7 @@ export default function Alicuotas() {
                         <td className="px-6 py-4 text-right whitespace-nowrap">
                           {isAdmin ? (
                             <span className={`font-black text-sm ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                              ${saldoCalculado.toFixed(2)} USD
+                              {saldoCalculado > 0 ? `$${saldoCalculado.toFixed(2)} USD` : '$0.00 (Solvente)'}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium bg-slate-100 px-2.5 py-1 rounded-lg">
@@ -282,9 +344,9 @@ export default function Alicuotas() {
                 const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
                 const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
 
-                const codNorm = String(codigo).toUpperCase().trim();
-                const saldoCalculado = saldosPendientesMapa[codNorm] !== undefined 
-                  ? saldosPendientesMapa[codNorm] 
+                const codNorm = normalizarCod(codigo);
+                const saldoCalculado = saldosCalculadosMapa[codNorm] !== undefined 
+                  ? saldosCalculadosMapa[codNorm] 
                   : Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
 
                 return (
