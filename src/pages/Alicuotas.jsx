@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import { 
   Building2, 
@@ -7,41 +8,60 @@ import {
   AlertTriangle, 
   User, 
   RefreshCw,
-  Percent
+  Percent,
+  ShieldAlert,
+  Lock
 } from 'lucide-react';
 
 export default function Alicuotas() {
+  const { isAdmin, toggleAdminRole } = useAuth();
   const [unidades, setUnidades] = useState([]);
+  const [saldosPendientesMapa, setSaldosPendientesMapa] = useState({});
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('todos');
 
   useEffect(() => {
-    cargarUnidades();
+    cargarUnidadesYSaldos();
   }, []);
 
-  async function cargarUnidades() {
+  async function cargarUnidadesYSaldos() {
     try {
       setLoading(true);
       setErrorMsg(null);
       
-      const { data, error } = await supabase
+      const { data: dataUnidades, error: errUnidades } = await supabase
         .from('unidades')
         .select('*');
 
-      if (error) throw error;
+      if (errUnidades) throw errUnidades;
 
-      setUnidades(data || []);
+      // Calcular suma total de pagos pendientes por unidad desde la tabla cobranzas
+      const { data: dataCobranzas, error: errCobranzas } = await supabase
+        .from('cobranzas')
+        .select('*');
+
+      const mapa = {};
+      if (!errCobranzas && dataCobranzas) {
+        dataCobranzas.forEach(c => {
+          if (c.estado !== 'aprobado') {
+            const cod = String(c.id_inmueble || '').toUpperCase().trim();
+            mapa[cod] = (mapa[cod] || 0) + Number(c.monto_usd || 0);
+          }
+        });
+      }
+
+      setSaldosPendientesMapa(mapa);
+      setUnidades(dataUnidades || []);
     } catch (err) {
-      console.error('Error al cargar unidades:', err.message);
+      console.error('Error al cargar unidades y saldos:', err.message);
       setErrorMsg(err.message);
     } finally {
       setLoading(false);
     }
   }
 
-  // Helper para extraer valores de campos
   const getCampo = (item, keys) => {
     for (let key of keys) {
       if (item[key] !== undefined && item[key] !== null) return item[key];
@@ -49,31 +69,24 @@ export default function Alicuotas() {
     return null;
   };
 
-  // Función para asignar jerarquía y ordenar los códigos de inmueble
   const obtenerPesoOrden = (codigo) => {
     const cod = String(codigo || '').toUpperCase().trim();
-
-    // Definimos la jerarquía por tipo
     let tipoPeso = 99;
     if (cod.startsWith('APTO.')) tipoPeso = 1;
     else if (cod.startsWith('PH.')) tipoPeso = 2;
     else if (cod.startsWith('OFIC.')) tipoPeso = 3;
     else if (cod.startsWith('LOCAL')) tipoPeso = 4;
 
-    // Extraemos el número para ordenar numéricamente (ej: 101, 102, 01, 02)
     const numeroMatch = cod.match(/\d+/);
     const numero = numeroMatch ? parseInt(numeroMatch[0], 10) : 0;
-
     return { tipoPeso, numero };
   };
 
-  // Suma total de alícuotas
   const totalAlicuotas = unidades.reduce((acc, item) => {
     const val = getCampo(item, ['alicuota_porcentaje', 'alicuota', 'porcentaje']);
     return acc + Number(val || 0);
   }, 0);
 
-  // 1. Filtrado
   const unidadesFiltradas = unidades.filter((item) => {
     const codigo = String(getCampo(item, ['codigo_unidad', 'numero_inmueble', 'unidad']) || '').toUpperCase().trim();
     const propietario = String(getCampo(item, ['propietario_nombre', 'propietario']) || '').toLowerCase();
@@ -91,7 +104,6 @@ export default function Alicuotas() {
     return true;
   });
 
-  // 2. Ordenamiento Personalizado (Aptos -> PH -> Oficinas -> Locales)
   const unidadesOrdenadas = [...unidadesFiltradas].sort((a, b) => {
     const codA = getCampo(a, ['codigo_unidad', 'numero_inmueble', 'unidad']);
     const codB = getCampo(b, ['codigo_unidad', 'numero_inmueble', 'unidad']);
@@ -99,29 +111,67 @@ export default function Alicuotas() {
     const pesoA = obtenerPesoOrden(codA);
     const pesoB = obtenerPesoOrden(codB);
 
-    // Primero compara por tipo de inmueble
     if (pesoA.tipoPeso !== pesoB.tipoPeso) {
       return pesoA.tipoPeso - pesoB.tipoPeso;
     }
-
-    // Si son del mismo tipo, compara por el número de unidad
     return pesoA.numero - pesoB.numero;
   });
 
+  // Restricción Exclusiva para Administradores
+  if (!isAdmin) {
+    return (
+      <div className="max-w-4xl mx-auto py-8 sm:py-12 px-2 sm:px-4">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl text-center space-y-6">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
+            <ShieldAlert size={36} />
+          </div>
+          
+          <div className="space-y-2">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">Acceso Restringido</h2>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">
+              <Lock size={14} />
+              Exclusivo para Administradores
+            </div>
+          </div>
+
+          <p className="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
+            La pantalla de <strong>Inmuebles, Alícuotas y Saldos Pendientes</strong> es de uso exclusivo para el equipo de administración del condominio.
+          </p>
+
+          <div className="pt-4 border-t border-slate-100">
+            <button
+              onClick={toggleAdminRole}
+              className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/25 transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Lock size={16} />
+              <span>Activar Modo Administrador (Prueba)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
       
       {/* Encabezado */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Inmuebles y Distribución de Alícuotas</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Total registrados: <span className="font-semibold text-slate-700">{unidades.length}</span> inmuebles
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Inmuebles y Distribución de Alícuotas</h1>
+            <span className="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+              <Lock size={12} />
+              ADMIN
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Total registrados: <span className="font-semibold text-slate-700">{unidades.length}</span> inmuebles (Aptos, Locales y Oficinas)
           </p>
         </div>
 
         {/* Control del 100% */}
-        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-xs font-medium ${
+        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-xs font-medium w-full sm:w-auto justify-between sm:justify-start ${
           Math.abs(totalAlicuotas - 100) < 0.5 
             ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
             : 'bg-amber-50 border-amber-200 text-amber-800'
@@ -186,7 +236,7 @@ export default function Alicuotas() {
         {loading ? (
           <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2 text-xs">
             <RefreshCw size={24} className="animate-spin text-indigo-600" />
-            <span>Cargando unidades...</span>
+            <span>Cargando unidades y calculando saldos pendientes...</span>
           </div>
         ) : unidadesOrdenadas.length === 0 ? (
           <div className="p-12 text-center text-slate-500 space-y-2">
@@ -202,7 +252,7 @@ export default function Alicuotas() {
                     <th className="px-6 py-3.5">Código de Unidad</th>
                     <th className="px-6 py-3.5">Propietario / Residente</th>
                     <th className="px-6 py-3.5 text-center">Alícuota (%)</th>
-                    <th className="px-6 py-3.5 text-right">Saldo ($)</th>
+                    <th className="px-6 py-3.5 text-right">Saldo Pendiente ($)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -210,7 +260,11 @@ export default function Alicuotas() {
                     const codigo = getCampo(item, ['codigo_unidad', 'numero_inmueble', 'unidad']) || `UNIDAD-${idx + 1}`;
                     const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
                     const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
-                    const saldoVal = Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
+
+                    const codNorm = String(codigo).toUpperCase().trim();
+                    const saldoCalculado = saldosPendientesMapa[codNorm] !== undefined 
+                      ? saldosPendientesMapa[codNorm] 
+                      : Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
 
                     return (
                       <tr key={item.id || idx} className="hover:bg-slate-50/80 transition-colors">
@@ -236,8 +290,8 @@ export default function Alicuotas() {
                         </td>
 
                         <td className="px-6 py-4 text-right">
-                          <span className={`font-bold ${saldoVal > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                            ${saldoVal.toFixed(2)}
+                          <span className={`font-black text-sm ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                            ${saldoCalculado.toFixed(2)} USD
                           </span>
                         </td>
                       </tr>
@@ -253,7 +307,11 @@ export default function Alicuotas() {
                 const codigo = getCampo(item, ['codigo_unidad', 'numero_inmueble', 'unidad']) || `UNIDAD-${idx + 1}`;
                 const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
                 const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
-                const saldoVal = Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
+
+                const codNorm = String(codigo).toUpperCase().trim();
+                const saldoCalculado = saldosPendientesMapa[codNorm] !== undefined 
+                  ? saldosPendientesMapa[codNorm] 
+                  : Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
 
                 return (
                   <div key={item.id || idx} className="p-4 space-y-2 bg-white">
@@ -276,8 +334,8 @@ export default function Alicuotas() {
                         <span className="font-medium text-slate-800">{propietario}</span>
                       </div>
 
-                      <span className={`font-bold ${saldoVal > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                        {saldoVal > 0 ? `Debe $${saldoVal.toFixed(2)}` : 'Solvente'}
+                      <span className={`font-black text-xs ${saldoCalculado > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                        {saldoCalculado > 0 ? `Saldo: $${saldoCalculado.toFixed(2)} USD` : 'Solvente ($0.00)'}
                       </span>
                     </div>
                   </div>

@@ -21,6 +21,20 @@ export default function Gastos() {
     cargarGastos();
   }, [periodo]);
 
+  const calcularPeriodoAnterior = (p) => {
+    const [yearStr, monthStr] = p.split('-');
+    let year = parseInt(yearStr, 10);
+    let month = parseInt(monthStr, 10);
+    if (isNaN(year) || isNaN(month)) return null;
+    if (month === 1) {
+      month = 12;
+      year -= 1;
+    } else {
+      month -= 1;
+    }
+    return `${year}-${String(month).padStart(2, '0')}`;
+  };
+
   async function cargarGastos() {
     try {
       setLoading(true);
@@ -31,7 +45,45 @@ export default function Gastos() {
         .order('id', { ascending: true });
 
       if (error) throw error;
-      setGastos(data || []);
+
+      if (data && data.length > 0) {
+        setGastos(data);
+      } else {
+        // Al cambiar de mes/año sin registros, se generan automáticamente los del mes anterior
+        const prevP = calcularPeriodoAnterior(periodo);
+        if (prevP) {
+          const { data: prevData } = await supabase
+            .from('gastos_comunes')
+            .select('*')
+            .eq('periodo', prevP);
+
+          if (prevData && prevData.length > 0) {
+            const clonados = prevData.map(g => ({
+              codigo: g.codigo,
+              descripcion: g.descripcion,
+              monto_usd: g.monto_usd,
+              categoria: g.categoria,
+              periodo: periodo,
+              unidades_reparto: g.unidades_reparto
+            }));
+
+            const { data: inserted, error: errInsert } = await supabase
+              .from('gastos_comunes')
+              .insert(clonados)
+              .select();
+
+            if (!errInsert && inserted) {
+              setGastos(inserted);
+            } else {
+              setGastos(clonados.map((c, i) => ({ ...c, id: `clon-${i}` })));
+            }
+          } else {
+            setGastos([]);
+          }
+        } else {
+          setGastos([]);
+        }
+      }
     } catch (err) {
       console.error('Error al cargar gastos:', err.message);
     } finally {
