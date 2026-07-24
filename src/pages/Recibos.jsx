@@ -183,11 +183,11 @@ export default function Recibos() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         
-        {/* Panel Izquierdo: Lista de Inmuebles */}
-        <div className="no-print bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col h-[700px]">
-          <div className="p-4 border-b border-slate-100 bg-slate-50">
+        {/* Panel Izquierdo: Lista de Inmuebles (h-56 en móvil / h-[700px] en escritorio) */}
+        <div className="no-print bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col h-60 sm:h-72 lg:h-[700px]">
+          <div className="p-3 sm:p-4 border-b border-slate-100 bg-slate-50">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -202,7 +202,7 @@ export default function Recibos() {
 
           <div className="overflow-y-auto divide-y divide-slate-100 flex-1">
             {loading ? (
-              <div className="p-8 text-center text-slate-400 flex items-center justify-center gap-2">
+              <div className="p-8 text-center text-slate-400 flex items-center justify-center gap-2 text-xs">
                 <RefreshCw size={18} className="animate-spin" />
                 <span>Cargando unidades...</span>
               </div>
@@ -217,13 +217,13 @@ export default function Recibos() {
                   <button
                     key={u.id}
                     onClick={() => setUnidadSeleccionada(u)}
-                    className={`w-full text-left p-4 transition-all flex items-center justify-between cursor-pointer ${
+                    className={`w-full text-left p-3 sm:p-4 transition-all flex items-center justify-between cursor-pointer ${
                       esSeleccionado ? 'bg-indigo-50/80 border-l-4 border-indigo-600' : 'hover:bg-slate-50'
                     }`}
                   >
                     <div>
                       <span className="font-mono text-xs font-bold text-slate-800 block">{cod}</span>
-                      <span className="text-xs text-slate-500 block truncate max-w-[160px]">{prop}</span>
+                      <span className="text-xs text-slate-500 block truncate max-w-[140px] sm:max-w-[180px]">{prop}</span>
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] text-slate-400 block">{alic.toFixed(2)}% alícuota</span>
@@ -236,32 +236,33 @@ export default function Recibos() {
         </div>
 
         {/* Panel Derecho: Vista Recibo */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-6 flex flex-col justify-between overflow-hidden">
           
           {unidadSeleccionada ? (
             <div>
-              <div className="print-area p-6 bg-white text-slate-900 border border-slate-300 rounded-lg text-xs space-y-4">
+              <div className="print-area p-4 sm:p-6 bg-white text-slate-900 border border-slate-300 rounded-lg text-xs space-y-4">
                 
                 {/* Encabezado del Documento */}
-                <div className="flex justify-between items-start border-b-2 border-slate-800 pb-3">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-start gap-2 border-b-2 border-slate-800 pb-3">
                   <div>
-                    <h2 className="text-xl font-extrabold text-blue-900 tracking-wider">Residencias Aurora</h2>
-                    <p className="text-[11px] font-bold text-slate-600 uppercase">CONDOMINIO</p>
-                    <p className="text-sm font-bold text-slate-800 mt-1">
+                    <h2 className="text-lg sm:text-xl font-extrabold text-blue-900 tracking-wider">Residencias Aurora</h2>
+                    <p className="text-[10px] sm:text-[11px] font-bold text-slate-600 uppercase">CONDOMINIO</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1">
                       RECIBO DE CONDOMINIO <span className="uppercase">{periodo}</span>
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-slate-800">Alícuota: {alicuota.toFixed(2)}%</p>
-                    <p className="text-xs text-slate-700 mt-1">
+                  <div className="text-left sm:text-right">
+                    <p className="text-xs sm:text-sm font-bold text-slate-800">Alícuota: {alicuota.toFixed(2)}%</p>
+                    <p className="text-[11px] sm:text-xs text-slate-700 mt-0.5">
                       Propietario: <span className="font-bold uppercase">{getCampo(unidadSeleccionada, ['propietario_nombre', 'propietario'])}</span>
                     </p>
-                    <p className="text-[11px] text-slate-500">Inmueble: <span className="font-bold text-slate-800">{getCampo(unidadSeleccionada, ['codigo_unidad', 'numero_inmueble'])}</span></p>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500">Inmueble: <span className="font-bold text-slate-800">{getCampo(unidadSeleccionada, ['codigo_unidad', 'numero_inmueble'])}</span></p>
                   </div>
                 </div>
 
-                {/* Tabla de Detalle */}
-                <table className="w-full border-collapse text-[11px]">
+                {/* Tabla de Detalle con Scroll Horizontal Móvil */}
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-[10px] sm:text-[11px] min-w-[340px]">
                   <thead>
                     <tr className="border-b-2 border-slate-400 bg-slate-100 text-slate-700 uppercase font-bold">
                       <th className="py-1.5 px-2 text-left">GASTO DESCRIPCIÓN</th>
@@ -351,6 +352,7 @@ export default function Recibos() {
                     </tr>
                   </tbody>
                 </table>
+                </div>
 
                 {/* Pie de Recibo */}
                 <div className="pt-2 border-t border-slate-300 text-[10px] space-y-1.5 text-slate-700">

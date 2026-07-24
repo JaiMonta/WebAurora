@@ -274,7 +274,8 @@ export default function Gastos() {
             </button>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* 1. Vista Tabla Escritorio (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold">
                 <tr>
@@ -330,6 +331,52 @@ export default function Gastos() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* 2. Vista Cards Móvil (< md) */}
+          <div className="block md:hidden divide-y divide-slate-100">
+            {gastos.length === 0 ? (
+              <div className="p-8 text-center text-slate-400 text-xs">No hay gastos registrados en este período.</div>
+            ) : (
+              gastos.map((g) => {
+                const esNoComun = g.categoria === 'GASTO_NO_COMUN';
+                const esIngreso = g.categoria === 'INGRESO_EXTRA';
+                const cantUnidades = g.unidades_reparto || 35;
+                const cuotaInd = (g.monto_usd || 0) / cantUnidades;
+
+                return (
+                  <div key={g.id} className="p-4 space-y-2.5 bg-white">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-700">{g.codigo || '—'}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          esIngreso ? 'bg-emerald-100 text-emerald-800' :
+                          esNoComun ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {esIngreso ? 'INGRESO' : esNoComun ? 'NO COMÚN' : 'COMÚN'}
+                        </span>
+                      </div>
+                      <span className="font-black text-slate-900 text-sm">${Number(g.monto_usd || 0).toFixed(2)}</span>
+                    </div>
+
+                    <p className="font-bold text-xs text-slate-800">{g.descripcion || 'Sin descripción'}</p>
+
+                    <div className="flex items-center justify-between pt-1 text-[11px] text-slate-500">
+                      <span>{esNoComun ? `${cantUnidades} unid. ($${cuotaInd.toFixed(2)} c/u)` : 'Reparto por Alícuota'}</span>
+
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleEdit(g)} className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg font-bold text-xs flex items-center gap-1">
+                          <Edit2 size={12} /> Editar
+                        </button>
+                        <button onClick={() => handleDelete(g.id)} className="p-1.5 bg-rose-50 text-rose-600 rounded-lg font-bold text-xs flex items-center gap-1">
+                          <Trash2 size={12} /> Borrar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 

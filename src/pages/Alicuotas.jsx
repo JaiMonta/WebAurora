@@ -145,7 +145,7 @@ export default function Alicuotas() {
         </div>
       )}
 
-      {/* Filtros */}
+      {/* Filtros con Scroll Horizontal Móvil */}
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-center">
         <div className="relative w-full sm:w-80">
           <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -154,11 +154,11 @@ export default function Alicuotas() {
             placeholder="Buscar por código o propietario..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
           />
         </div>
 
-        <div className="flex flex-wrap gap-1.5 bg-slate-200/60 p-1 rounded-xl text-xs font-medium">
+        <div className="flex items-center gap-1.5 bg-slate-200/60 p-1 rounded-xl text-xs font-medium w-full sm:w-auto overflow-x-auto no-scrollbar">
           {[
             { id: 'todos', label: 'Todos' },
             { id: 'apto', label: 'Aptos' },
@@ -169,7 +169,7 @@ export default function Alicuotas() {
             <button
               key={tab.id}
               onClick={() => setFiltroTipo(tab.id)}
-              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 filtroTipo === tab.id 
                   ? 'bg-white text-slate-800 shadow-sm font-bold' 
                   : 'text-slate-600 hover:text-slate-900'
@@ -181,68 +181,109 @@ export default function Alicuotas() {
         </div>
       </div>
 
-      {/* Tabla de Unidades Ordenadas */}
+      {/* Lista de Unidades Responsiva (Tabla Escritorio / Cards Móvil) */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2">
+          <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2 text-xs">
             <RefreshCw size={24} className="animate-spin text-indigo-600" />
             <span>Cargando unidades...</span>
           </div>
         ) : unidadesOrdenadas.length === 0 ? (
           <div className="p-12 text-center text-slate-500 space-y-2">
-            <p className="font-semibold text-slate-700 text-base">No se encontraron inmuebles para esta categoría.</p>
+            <p className="font-semibold text-slate-700 text-sm">No se encontraron inmuebles para esta categoría.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-400 tracking-wider border-b border-slate-100">
-                <tr>
-                  <th className="px-6 py-3.5">Código de Unidad</th>
-                  <th className="px-6 py-3.5">Propietario / Residente</th>
-                  <th className="px-6 py-3.5 text-center">Alícuota (%)</th>
-                  <th className="px-6 py-3.5 text-right">Saldo ($)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {unidadesOrdenadas.map((item, idx) => {
-                  const codigo = getCampo(item, ['codigo_unidad', 'numero_inmueble', 'unidad']) || `UNIDAD-${idx + 1}`;
-                  const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
-                  const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
-                  const saldoVal = Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
+          <div>
+            {/* 1. Vista Tabla Escritorio (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-400 tracking-wider border-b border-slate-100">
+                  <tr>
+                    <th className="px-6 py-3.5">Código de Unidad</th>
+                    <th className="px-6 py-3.5">Propietario / Residente</th>
+                    <th className="px-6 py-3.5 text-center">Alícuota (%)</th>
+                    <th className="px-6 py-3.5 text-right">Saldo ($)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {unidadesOrdenadas.map((item, idx) => {
+                    const codigo = getCampo(item, ['codigo_unidad', 'numero_inmueble', 'unidad']) || `UNIDAD-${idx + 1}`;
+                    const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
+                    const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
+                    const saldoVal = Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
 
-                  return (
-                    <tr key={item.id || idx} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="px-6 py-4 font-semibold text-slate-800 flex items-center gap-3">
-                        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
-                          <Building2 size={18} />
+                    return (
+                      <tr key={item.id || idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="px-6 py-4 font-semibold text-slate-800 flex items-center gap-3">
+                          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+                            <Building2 size={18} />
+                          </div>
+                          <span className="font-mono text-slate-900 font-bold tracking-wide">{codigo}</span>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 text-slate-700 font-medium">
+                            <User size={15} className="text-slate-400 shrink-0" />
+                            <span>{propietario}</span>
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-4 text-center">
+                          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-lg text-xs">
+                            <Percent size={12} className="text-slate-400" />
+                            {alicuotaVal.toFixed(2)}%
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-4 text-right">
+                          <span className={`font-bold ${saldoVal > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                            ${saldoVal.toFixed(2)}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 2. Vista Cards Móvil (< md) */}
+            <div className="block md:hidden divide-y divide-slate-100">
+              {unidadesOrdenadas.map((item, idx) => {
+                const codigo = getCampo(item, ['codigo_unidad', 'numero_inmueble', 'unidad']) || `UNIDAD-${idx + 1}`;
+                const propietario = getCampo(item, ['propietario_nombre', 'propietario']) || 'No asignado';
+                const alicuotaVal = Number(getCampo(item, ['alicuota_porcentaje', 'alicuota']) || 0);
+                const saldoVal = Number(getCampo(item, ['saldo_pendiente_usd', 'saldo']) || 0);
+
+                return (
+                  <div key={item.id || idx} className="p-4 space-y-2 bg-white">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
+                          <Building2 size={16} />
                         </div>
-                        <span className="font-mono text-slate-900 font-bold tracking-wide">{codigo}</span>
-                      </td>
+                        <span className="font-mono text-xs font-bold text-slate-900">{codigo}</span>
+                      </div>
 
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-slate-700 font-medium">
-                          <User size={15} className="text-slate-400 shrink-0" />
-                          <span>{propietario}</span>
-                        </div>
-                      </td>
+                      <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded text-[10px]">
+                        {alicuotaVal.toFixed(2)}% alícuota
+                      </span>
+                    </div>
 
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-lg text-xs">
-                          <Percent size={12} className="text-slate-400" />
-                          {alicuotaVal.toFixed(2)}%
-                        </span>
-                      </td>
+                    <div className="flex items-center justify-between text-xs text-slate-600 pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <User size={13} className="text-slate-400" />
+                        <span className="font-medium text-slate-800">{propietario}</span>
+                      </div>
 
-                      <td className="px-6 py-4 text-right">
-                        <span className={`font-bold ${saldoVal > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                          ${saldoVal.toFixed(2)}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      <span className={`font-bold ${saldoVal > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                        {saldoVal > 0 ? `Debe $${saldoVal.toFixed(2)}` : 'Solvente'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

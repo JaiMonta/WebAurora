@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Noticias from './pages/Noticias'; // <--- Importamos Noticias
 import Recibos from './pages/Recibos';
+import Cobranzas from './pages/Cobranzas';
 import Gastos from './pages/Gastos';
 import Alicuotas from './pages/Alicuotas';
 
@@ -26,6 +27,9 @@ function MainApp() {
       {/* Módulo de Recibos */}
       {currentTab === 'recibos' && <Recibos />}
       
+      {/* Módulo de Cobranzas */}
+      {currentTab === 'cobranzas' && <Cobranzas />}
+
       {/* Módulo de Gastos e Ingresos */}
       {currentTab === 'gastos' && <Gastos />}
 

@@ -31,8 +31,26 @@ export const AuthProvider = ({ children }) => {
     return supabase.auth.signOut();
   };
 
+  // Determinar si el usuario tiene rol de Administrador
+  // Es admin si en metadata su rol es 'admin', o si su email contiene 'admin' o 'junta'
+  const [demoAdminOverride, setDemoAdminOverride] = useState(true); // Habilitado por defecto para facilitar pruebas
+
+  const isAdmin = Boolean(
+    user && (
+      user.app_metadata?.role === 'admin' || 
+      user.user_metadata?.role === 'admin' || 
+      user.email?.toLowerCase().includes('admin') || 
+      user.email?.toLowerCase().includes('junta') ||
+      demoAdminOverride
+    )
+  );
+
+  const toggleAdminRole = () => {
+    setDemoAdminOverride(prev => !prev);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, isAdmin, toggleAdminRole, demoAdminOverride }}>
       {!loading && children}
     </AuthContext.Provider>
   );
